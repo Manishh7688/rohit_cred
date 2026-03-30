@@ -42,16 +42,16 @@ const CustomBottomTabBar: React.FC<BottomTabBarProps> = ({
           const size = 24;
           switch (routeName) {
             case 'Home':
-              return <Image source={require('../assets/images/home1.png')} style={{ width: 36, height: 36 }} />;
+              return <Image source={require('../assets/images/ss.png')} style={{ width: 20, height: 20 }} />;
             case 'Cards':
-              return <CreditCard color={color} size={size} strokeWidth={focused ? 2.5 : 2} />;
+              return <Image source={require('../assets/images/wallet.png')} style={{ width: 20, height: 20 }} />;
             case 'UPI':
               // Center oversized button handled differently below
               return null;
             case 'Rewards':
-              return <Star color={color} size={size} strokeWidth={focused ? 2.5 : 2} />;
+              return <Image source={require('../assets/images/star.png')} style={{ width: 20, height: 20 }} />;
             case 'More':
-              return <LayoutGrid color={color} size={size} strokeWidth={focused ? 2.5 : 2} />;
+              return <Image source={require('../assets/images/menu.png')} style={{ width: 20, height: 20 }} />;
             default:
               return <Home color={color} size={size} />;
           }
@@ -66,20 +66,14 @@ const CustomBottomTabBar: React.FC<BottomTabBarProps> = ({
                 style={styles.centerButtonContainer}
               >
                 <View style={styles.glowOuter}>
-                  <LinearGradient
-                    colors={['rgba(255,255,255,0.4)', 'rgba(255,255,255,0.05)', 'transparent']}
+                  {/* <LinearGradient
+                    colors={['rgba(255,255,255,0.3)', 'rgba(255,255,255,0.05)', 'transparent']}
                     style={styles.glowInner}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 0, y: 1 }}
-                  >
-                    <View style={styles.centerButton}>
-                      <Text style={styles.upiText}>UPI</Text>
-                      <ChevronRight color="#fff" size={14} style={{ marginLeft: 2 }} strokeWidth={3} />
-                    </View>
-                  </LinearGradient>
+                  > */}
+                  <Image source={require('../assets/images/mid.png')} style={{ width: 60, height: 60 }} />
+                  {/* </LinearGradient> */}
                 </View>
               </TouchableOpacity>
-              {/* No label under UPI usually, or just leave it empty if there is none. In the screenshot, there is no label for UPI below the circle. */}
             </View>
           );
         }
@@ -136,9 +130,9 @@ const styles = StyleSheet.create({
     alignItems: 'center'
   },
   label: {
-    fontSize: 10,
-    fontFamily: 'CirkaBold700',
-    letterSpacing: 0.5,
+    fontSize: 8,
+    fontFamily: 'Poppins-Medium',
+    // letterSpacing: 0.5,
     marginTop: 2,
   },
   centerButtonWrapper: {
@@ -156,17 +150,17 @@ const styles = StyleSheet.create({
   glowOuter: {
     width: 80,
     height: 80,
-    borderRadius: 40,
-    backgroundColor: '#000',
+    // borderRadius: 40,
+    // backgroundColor: '#000',
     justifyContent: 'center',
     alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#333',
-    shadowColor: '#ffffff',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.6,
-    shadowRadius: 15,
-    elevation: 15,
+    // borderWidth: 1,
+    // borderColor: '#333',
+    // shadowColor: '#ffffff',
+    // shadowOffset: { width: 0, height: 0 },
+    // shadowOpacity: 0.6,
+    // shadowRadius: 15,
+    // elevation: 15,
   },
   glowInner: {
     width: 76,
@@ -187,11 +181,19 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#222',
   },
+  upiContent: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 2,
+  },
   upiText: {
     color: '#fff',
-    fontSize: 16,
+    fontSize: 14,
     fontFamily: 'Poppins-Bold',
     fontStyle: 'italic',
-    letterSpacing: 1,
+    letterSpacing: 2,
+  },
+  upiChevron: {
+    transform: [{ translateX: -4 }],
   },
 });

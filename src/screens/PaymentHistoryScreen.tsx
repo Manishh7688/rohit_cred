@@ -9,6 +9,7 @@ import {
   ScrollView,
   Dimensions,
   StatusBar,
+  Image,
 } from 'react-native';
 import { Shimmer } from '../components/Shimmer';
 import {
@@ -22,8 +23,10 @@ import {
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import ArrowIcon from '../components/ArrowIcon';
+import { MOCK_DATA } from '../utils/staticdata';
 
-const { height } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 
 // Data Types
 type Transaction = {
@@ -38,69 +41,6 @@ type Transaction = {
   iconType?: string; // e.g., 'blinkit', 'hdfc', 'book'
 };
 
-// Mock Data
-const MOCK_DATA: Transaction[] = [
-  {
-    id: '1',
-    vendor: 'Blinkit',
-    amount: 1291.0,
-    dateStr: '7th mar 7:24 am',
-    monthGroup: "MAR '26",
-    status: 'FAILED',
-    hasSupportAction: true,
-    iconType: 'blinkit',
-  },
-  {
-    id: '2',
-    vendor: 'HDFC MILLENNIA .. 3876',
-    amount: 56541.0,
-    dateStr: '2nd mar 6:49 pm',
-    monthGroup: "MAR '26",
-    status: 'COMPLETED',
-    completionTimeStr: 'COMPLETED WITHIN 8 SECONDS',
-    iconType: 'hdfc',
-  },
-  {
-    id: '3',
-    vendor: 'HDFC MILLENNIA .. 3876',
-    amount: 12624.0,
-    dateStr: '3rd feb 11:38 am',
-    monthGroup: "FEB '26",
-    status: 'COMPLETED',
-    completionTimeStr: 'COMPLETED WITHIN 8 SECONDS',
-    iconType: 'hdfc',
-  },
-  {
-    id: '4',
-    vendor: 'Education Fees Payment',
-    amount: 27720.0,
-    dateStr: '2nd feb 4:49 pm',
-    monthGroup: "FEB '26",
-    status: 'COMPLETED',
-    iconType: 'book',
-  },
-  {
-    id: '5',
-    vendor: 'Education Fees Payment',
-    amount: 5600.0,
-    dateStr: '28th jan 3:56 pm',
-    monthGroup: "JAN '26",
-    status: 'COMPLETED',
-    iconType: 'book',
-  },
-];
-
-const MORE_MOCK_DATA: Transaction[] = [
-  {
-    id: '6',
-    vendor: 'CRED RentPay',
-    amount: 14000.0,
-    dateStr: '15th jan 10:00 am',
-    monthGroup: "JAN '26",
-    status: 'COMPLETED',
-    iconType: 'book',
-  },
-];
 
 const FILTER_TABS = [
   { id: 'category', label: 'category' },
@@ -132,9 +72,7 @@ const PaymentHistoryScreen = () => {
 
   // Screen States
   const [loading, setLoading] = useState(true);
-  const [fetchingMore, setFetchingMore] = useState(false);
   const [transactions, setTransactions] = useState<Transaction[]>([]);
-  const [loadedAll, setLoadedAll] = useState(false);
 
   // Filter States
   const [modalVisible, setModalVisible] = useState(false);
@@ -146,20 +84,9 @@ const PaymentHistoryScreen = () => {
     const loadInitial = setTimeout(() => {
       setTransactions(MOCK_DATA);
       setLoading(false);
-    }, 1500);
+    }, 1000);
     return () => clearTimeout(loadInitial);
   }, []);
-
-  const fetchMoreData = () => {
-    if (!fetchingMore && !loadedAll) {
-      setFetchingMore(true);
-      setTimeout(() => {
-        setTransactions((prev) => [...prev, ...MORE_MOCK_DATA]);
-        setFetchingMore(false);
-        setLoadedAll(true);
-      }, 1500);
-    }
-  };
 
   const toggleCategory = (cat: string) => {
     if (selectedCategories.includes(cat)) {
@@ -178,29 +105,42 @@ const PaymentHistoryScreen = () => {
     setSelectedCategories([]);
   };
 
-  const renderIcon = (type: string | undefined) => {
-    switch (type) {
-      case 'blinkit':
-        return (
-          <View style={[styles.vendorIcon, { backgroundColor: '#FFEB3B' }]}>
-            <Text style={{ fontSize: 8, fontWeight: '800', color: '#000' }}>blinkit</Text>
-          </View>
-        );
-      case 'hdfc':
-        return (
-          <View style={styles.vendorIcon}>
-            <View style={{ width: 16, height: 16, backgroundColor: '#c5112e' }} />
-          </View>
-        );
-      case 'book':
-        return (
-          <View style={styles.vendorIcon}>
-            <BookOpen size={18} color="#00695c" strokeWidth={1.5} />
-          </View>
-        );
-      default:
-        return <View style={styles.vendorIcon} />;
+  const InitialsIcon = ({ name }: { name: string }) => {
+    const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+    return (
+      <View style={[styles.vendorIcon, { backgroundColor: '#f9f9f9' }]}>
+        <Text style={styles.initialsText}>{initials}</Text>
+      </View>
+    );
+  };
+
+  const renderIcon = (type: string | undefined, vendor: string) => {
+    const source = (t: string) => {
+      switch (t) {
+        case 'zomato': return require('../assets/images/zomato.png');
+        case 'zepto': return require('../assets/images/zepto.png');
+        case 'blinkit': return require('../assets/images/blinkit.png');
+        case 'rent': return require('../assets/images/rent.png');
+        case 'hdfc': return require('../assets/images/hdfc.png');
+        case 'urban': return require('../assets/images/urbancompany.webp');
+        case 'mygate': return require('../assets/images/mygate.webp');
+        case 'education': return require('../assets/images/book.png');
+
+        default: return null;
+      }
+    };
+
+    const iconSrc = type ? source(type) : null;
+
+    if (iconSrc) {
+      return (
+        <View style={styles.vendorIcon}>
+          <Image source={iconSrc} style={styles.vendorImage} resizeMode="contain" />
+        </View>
+      );
     }
+
+    return <InitialsIcon name={vendor} />;
   };
 
   const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
@@ -214,7 +154,7 @@ const PaymentHistoryScreen = () => {
         )}
         <View style={styles.transactionCard}>
           <View style={styles.cardLeft}>
-            {renderIcon(item.iconType)}
+            {renderIcon(item.iconType, item.vendor)}
             <View style={styles.cardContent}>
               <Text style={styles.vendorText}>{item.vendor}</Text>
               <View style={styles.statusRow}>
@@ -225,9 +165,9 @@ const PaymentHistoryScreen = () => {
                 )}
                 <Text style={styles.dateText}>{item.dateStr}</Text>
               </View>
-              {item.completionTimeStr && (
-                <View style={styles.completionPill}>
-                  <Text style={styles.completionText}>{item.completionTimeStr}</Text>
+              {item.status === 'FAILED' && (
+                <View style={styles.failedBadge}>
+                  <Text style={styles.failedText}>PAYMENT FAILED</Text>
                 </View>
               )}
             </View>
@@ -240,7 +180,7 @@ const PaymentHistoryScreen = () => {
                 maximumFractionDigits: 2,
               })}
             </Text>
-            {item.hasSupportAction && (
+            {item.status === 'FAILED' && (
               <TouchableOpacity style={styles.supportMiniBtn}>
                 <Headphones size={14} color="#666" />
               </TouchableOpacity>
@@ -276,16 +216,12 @@ const PaymentHistoryScreen = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar
-        barStyle="dark-content"
-        backgroundColor="#000"
-        translucent={true}
-      />
+      <StatusBar barStyle="light-content" backgroundColor="#000000" />
 
       {/* Header */}
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={{ padding: 10 }}>
-          <ArrowLeft size={24} color="#000" strokeWidth={1.5} />
+          <ArrowIcon />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>payment history</Text>
       </View>
@@ -327,20 +263,36 @@ const PaymentHistoryScreen = () => {
           keyExtractor={(item) => item.id}
           renderItem={renderItem}
           contentContainerStyle={{ paddingHorizontal: 20, paddingBottom: 40 }}
-          onEndReached={fetchMoreData}
           onEndReachedThreshold={0.5}
+          showsVerticalScrollIndicator={false}
           ListFooterComponent={
-            fetchingMore ? (
-              <View style={{ alignSelf: 'center', marginVertical: 20 }}>
-                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                  <Shimmer width={40} height={40} borderRadius={20} style={{ marginRight: 15 }} />
-                  <View>
-                    <Shimmer width={150} height={14} style={{ marginBottom: 8 }} />
-                    <Shimmer width={100} height={12} />
-                  </View>
-                </View>
-              </View>
-            ) : null
+            <View style={styles.footerLogos}>
+              <Image
+                source={require('../assets/images/up.png')}
+                style={styles.logosImage}
+                resizeMode="contain"
+              />
+              <Image
+                source={require('../assets/images/rupay.jpg')}
+                style={styles.logosImage}
+                resizeMode="contain"
+              />
+              <Image
+                source={require('../assets/images/axis.png')}
+                style={styles.logosImage}
+                resizeMode="contain"
+              />
+              <Image
+                source={require('../assets/images/yes.jpg')}
+                style={styles.logosImage}
+                resizeMode="contain"
+              />
+              <Image
+                source={require('../assets/images/dream.jpg')}
+                style={styles.logosImage}
+                resizeMode="contain"
+              />
+            </View>
           }
         />
       )}
@@ -435,11 +387,13 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
   },
   headerTitle: {
-    fontSize: 16,
-    fontFamily: 'Poppins-Bold',
-    color: '#000',
-    marginLeft: 15,
+    fontSize: 14,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#111',
+    marginLeft: 10,
     marginTop: 2,
+    letterSpacing: 0.2,
+    textAlign: 'center',
   },
   filterStrip: {
     minHeight: 50,
@@ -451,44 +405,46 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 20,
-    paddingHorizontal: 12,
+    borderColor: '#efefef',
+    borderRadius: 30,
+    paddingHorizontal: 16,
     paddingVertical: 6,
     marginRight: 10,
-    height: 32,
+    height: 36,
+    backgroundColor: '#fff',
   },
   filterPillActive: {
     flexDirection: 'row',
     alignItems: 'center',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    backgroundColor: '#fafafa',
-    borderRadius: 20,
-    paddingHorizontal: 12,
+    borderColor: '#efefef',
+    backgroundColor: '#fff',
+    borderRadius: 30,
+    paddingHorizontal: 16,
     paddingVertical: 6,
     marginRight: 10,
-    height: 32,
+    height: 36,
   },
   filterPillText: {
-    fontSize: 10,
-    fontFamily: 'Poppins-SemiBold',
+    fontSize: 9,
+    fontFamily: 'Poppins-Bold',
     color: '#999',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
   filterPillTextActive: {
-    fontSize: 10,
-    fontFamily: 'Poppins-SemiBold',
+    fontSize: 9,
+    fontFamily: 'Poppins-Bold',
     color: '#222',
-    letterSpacing: 1,
+    letterSpacing: 1.2,
   },
   monthHeader: {
     marginTop: 35,
     marginBottom: 20,
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Poppins-Bold',
     color: '#999',
     letterSpacing: 2,
+    textTransform: 'uppercase',
   },
   transactionCard: {
     flexDirection: 'row',
@@ -500,15 +456,25 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   vendorIcon: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
+    width: 52,
+    height: 52,
+    borderRadius: 26,
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
     marginRight: 15,
+    overflow: 'hidden',
+  },
+  vendorImage: {
+    width: '50%',
+    height: '50%',
+  },
+  initialsText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Bold',
+    color: '#888',
   },
   cardContent: {
     flex: 1,
@@ -518,7 +484,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: 'Poppins-Medium',
     color: '#111',
-    lineHeight: 20,
+    lineHeight: 22,
   },
   statusRow: {
     flexDirection: 'row',
@@ -526,7 +492,7 @@ const styles = StyleSheet.create({
     marginTop: 2,
   },
   dateText: {
-    fontSize: 12,
+    fontSize: 10,
     fontFamily: 'Poppins-Regular',
     color: '#888',
     marginLeft: 6,
@@ -551,9 +517,40 @@ const styles = StyleSheet.create({
     minWidth: 90,
   },
   amountText: {
-    fontSize: 14,
+    fontSize: 12,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#000',
+  },
+  failedBadge: {
+    backgroundColor: '#fff5f5',
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 4,
+    alignSelf: 'flex-start',
+    marginTop: 8,
+    borderWidth: 1,
+    borderColor: '#ffebee',
+  },
+  failedText: {
+    fontSize: 10,
     fontFamily: 'Poppins-Bold',
-    color: '#111',
+    color: '#d32f2f',
+    letterSpacing: 0.5,
+  },
+  footerLogos: {
+    paddingVertical: 1,
+    alignItems: 'center',
+    opacity: 0.8,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '50%',
+    alignSelf: 'center'
+    // gap: 10,
+  },
+  logosImage: {
+    width: 20,
+    height: 20,
+    opacity: 0.9
   },
   supportMiniBtn: {
     borderWidth: 1,
@@ -566,9 +563,9 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     borderBottomWidth: 1,
-    borderColor: '#f5f5f5',
+    borderColor: '#f0f0f0',
     borderStyle: 'dashed',
-    marginVertical: 10,
+    marginVertical: 12,
   },
 
   // Modal Styles

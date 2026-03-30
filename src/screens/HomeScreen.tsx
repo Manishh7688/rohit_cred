@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -16,7 +16,6 @@ import {
   Wallet,
   Building,
   GraduationCap,
-  Banknote,
   Gift,
   FileText,
   UserPlus,
@@ -28,10 +27,12 @@ import {
   Coins,
   Star,
 } from 'lucide-react-native';
+import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
 
 const HomeScreen: React.FC = () => {
+  const navigation = useNavigation();
   // Mock countdown timer
   const [timeLeft, setTimeLeft] = useState('02:44:34');
 
@@ -44,54 +45,36 @@ const HomeScreen: React.FC = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <Image
-              source={{ uri: 'https://i.pravatar.cc/100?img=5' }}
-              style={styles.avatar}
-            />
+            <View style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 3, borderColor: '#999' }}>
+              <Image
+                source={require('../assets/images/user.jpeg')}
+                style={styles.avatar}
+              />
+            </View>
             <View>
               <Text style={styles.greetingText}>hello,</Text>
-              <Text style={styles.nameText}>Aarti</Text>
+              <Text style={styles.nameText}>Shivam</Text>
             </View>
           </View>
           <TouchableOpacity style={styles.bellContainer}>
-            <Bell color="#111" size={24} />
-            <View style={styles.badge} />
+            <Bell color="#000" size={24} />
+            <View style={styles.badge}>
+              <Text style={styles.badgeText}>3</Text>
+            </View>
           </TouchableOpacity>
         </View>
 
-        {/* Reward Banner */}
-        <LinearGradient
-          colors={['#1a1a1a', '#0d1f2e']}
-          style={styles.rewardBanner}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-        >
-          <View style={styles.rewardContent}>
-            <View style={styles.rewardLeft}>
-              <Image
-                source={{ uri: 'https://picsum.photos/seed/chest/200/200' }}
-                style={styles.chestImage}
-              />
-            </View>
-            <View style={styles.rewardRight}>
-              <Text style={styles.claimText}>claim today's reward</Text>
-              <View style={styles.timerRow}>
-                <Text style={styles.expiresText}>expires in</Text>
-                <View style={styles.timerBadge}>
-                  <Text style={styles.timerText}>{timeLeft}</Text>
-                </View>
-              </View>
-              <TouchableOpacity activeOpacity={0.8}>
-                <LinearGradient
-                  colors={['#ffe066', '#ffc107']}
-                  style={styles.playNowBtn}
-                >
-                  <Text style={styles.playNowText}>Play now</Text>
-                </LinearGradient>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </LinearGradient>
+        {/* Top Reward Banner */}
+
+
+        <Image
+          source={require('../assets/images/banner1.jpeg')} // Placeholder for 3D chest
+          style={styles.chestImageBanner}
+          resizeMode="stretch"
+        />
+
+
+
 
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>MONEY MATTERS</Text>
@@ -102,20 +85,22 @@ const HomeScreen: React.FC = () => {
           showsHorizontalScrollIndicator={false}
           contentContainerStyle={styles.horizontalScroll}
         >
-          <View style={styles.pillCard}>
-            <Banknote color="#000" size={18} />
-            <Text style={styles.pillCardText}>cash</Text>
-            <Text style={styles.greenText}>₹3,50,000</Text>
-          </View>
           <TouchableOpacity style={styles.pillCard}>
             <Wallet color="#000" size={18} />
             <Text style={styles.pillCardText}>wallet</Text>
-            <Text style={styles.subText}>add money</Text>
-            <ChevronRight color="#666" size={16} style={{ marginLeft: 4 }} />
+            <Text style={styles.setupNowText}>setup now</Text>
+            <ChevronRight color="#666" size={16} />
           </TouchableOpacity>
-          <View style={styles.pillCard}>
-            <Building color="#000" size={18} />
-          </View>
+
+          <TouchableOpacity style={styles.pillCard}>
+            <Image
+              source={require('../assets/images/hdfc.png')}
+              style={{ width: 15, height: 15 }}
+              resizeMode="contain"
+            />
+            <Text style={styles.pillCardText}>bank accounts</Text>
+            <Text style={styles.checkBaText}>check ba...</Text>
+          </TouchableOpacity>
         </ScrollView>
 
         <View style={[styles.sectionHeader, styles.spaceBetweenRow]}>
@@ -126,47 +111,47 @@ const HomeScreen: React.FC = () => {
         {/* Upcoming Bills Stack */}
         <View style={styles.billsCard}>
           <View style={styles.billItem}>
-            <View style={styles.billIconContainer}>
-              <GraduationCap color="#111" size={24} />
+            <View style={styles.billIconCircle}>
+              <GraduationCap color="#111" size={22} />
             </View>
             <View style={styles.billInfo}>
               <Text style={styles.billName}>ALOK MAHESHWARI HUF</Text>
               <Text style={styles.billDesc}>tuition fee</Text>
             </View>
             <View style={styles.billAction}>
-              <TouchableOpacity style={styles.payBtnDark}>
-                <Text style={styles.payBtnText}>Pay 27720</Text>
+              <TouchableOpacity style={styles.payBtnBlack}>
+                <Text style={styles.payBtnText}>Pay 8400</Text>
               </TouchableOpacity>
-              <Text style={styles.dueText}>due in 4 days</Text>
+              <Text style={styles.overdueText}>overdue</Text>
             </View>
           </View>
-          <View style={styles.divider} />
+
+          <View style={styles.dividerLight} />
+
           <View style={styles.billItem}>
-            <View style={styles.billIconContainer2}>
-              <Building color="#d32f2f" size={24} />
+            <View style={styles.billIconCircle}>
+              <GraduationCap color="#111" size={22} />
             </View>
             <View style={styles.billInfo}>
-              <Text style={styles.billName}>HDFC Bank</Text>
-              <Text style={styles.billDesc}>XXXX XXXX 2278</Text>
+              <Text style={styles.billName}>KAUSHALYA WO TARSEEM...</Text>
+              <Text style={styles.billDesc}>tuition fee</Text>
             </View>
             <View style={styles.billAction}>
-              <TouchableOpacity style={styles.payBtnDark}>
-                <Text style={styles.payBtnText}>Pay ₹4,659</Text>
+              <TouchableOpacity style={styles.payBtnBlack}>
+                <Text style={styles.payBtnText}>Pay 25200</Text>
               </TouchableOpacity>
-              <Text style={styles.dueText}>DUE ON 8 APR</Text>
+              <Text style={styles.dueSoonText}>due in 2 days</Text>
             </View>
           </View>
-          <View style={styles.earnRewardsBanner}>
-            <LinearGradient
-              colors={['rgba(255,215,0,0.1)', 'transparent']}
-              style={styles.earnRewardsGradient}
-            >
-              <Star color="#d4af37" size={18} fill="#ffeb3b" />
-              <Text style={styles.earnRewardsText}>
-                pay bills & earn rewards worth ₹5,000 &gt;
-              </Text>
-            </LinearGradient>
-          </View>
+
+          <TouchableOpacity style={styles.cashbackFooter}>
+            <Image
+              source={require('../assets/images/banner1.jpeg')} // Placeholder for cashback icon
+              style={styles.cashbackIcon}
+            />
+            <Text style={styles.cashbackText}>save ₹157 with cashback</Text>
+            <ChevronRight color="#999" size={14} />
+          </TouchableOpacity>
         </View>
 
         <View style={styles.sectionHeader}>
@@ -205,84 +190,100 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.viewAllText}>view all &gt;</Text>
         </View>
         {/* Explore Cred */}
+        {/* Explore Cred Tags */}
         <View style={styles.exploreTagsContainer}>
           <View style={styles.exploreRow}>
-            <View style={styles.pillTag}>
-              <Gift color="#e91e63" size={16} />
+            <TouchableOpacity style={styles.pillTag}>
+              <Gift color="#ff4081" size={16} />
               <Text style={styles.pillTagText}>refer</Text>
-            </View>
-            <View style={styles.pillTag}>
-              <ShoppingBag color="#ff9800" size={16} />
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.pillTag}>
+              <ShoppingBag color="#ffa000" size={16} />
               <Text style={styles.pillTagText}>shop</Text>
-            </View>
-            <View style={styles.pillTag}>
-              <Banknote color="#4caf50" size={16} />
-              <Text style={styles.pillTagText}>cash</Text>
-            </View>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.pillTag}>
+              <Car color="#d32f2f" size={16} />
+              <Text style={styles.pillTagText}>garage</Text>
+            </TouchableOpacity>
           </View>
           <View style={styles.exploreRow}>
-            <View style={styles.pillTag}>
-              <View style={styles.cibilBadge}>
-                <Text style={styles.cibilBadgeText}>748</Text>
-              </View>
-              <Text style={styles.pillTagText}>CIBIL score</Text>
-            </View>
-            <View style={styles.pillTag}>
-              <Text style={styles.pillTagText}>garage </Text>
-              <Car color="#d32f2f" size={16} fill="#ef5350" />
-            </View>
-            <View style={styles.pillTag}>
-              <Coins color="#ffeb3b" size={16} fill="#fbc02d" />
+            <TouchableOpacity style={styles.pillTag}>
+              <Coins color="#fbc02d" size={16} />
               <Text style={styles.pillTagText}>gold</Text>
-            </View>
+            </TouchableOpacity>
           </View>
         </View>
 
+        {/* UPI ID Bar */}
+        <View style={styles.upiIdBar}>
+          <View style={styles.upiIdLeft}>
+            <Zap color="#aaa" size={16} />
+            <Text style={styles.upiIdText}>UPI ID: 8360268985@axisb</Text>
+            <TouchableOpacity hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}>
+              <FileText color="#999" size={14} />
+            </TouchableOpacity>
+          </View>
+          <TouchableOpacity style={styles.upiSafety}>
+            <Text style={styles.upiSafetyText}>upi safety tips &gt;</Text>
+          </TouchableOpacity>
+        </View>
+
         {/* CRED Payback Promo */}
+        {/* CRED UPI Promo Banner */}
         <LinearGradient
-          colors={['#111', '#061726']}
+          colors={['#1a0b2e', '#4a148c']}
           style={styles.paybackBanner}
+          start={{ x: 0, y: 0 }}
+          end={{ x: 1, y: 1 }}
         >
           <View style={styles.paybackContent}>
-            <View style={styles.paybackIconBg}>
-              <View style={styles.paybackIconInner} />
+            <View style={styles.paybackLeft}>
+              <Image
+                source={require('../assets/images/banner1.jpeg')} // Placeholder for purple card logo
+                style={styles.paybackLogo}
+              />
             </View>
             <View style={styles.paybackRight}>
-              <Text style={styles.claimText}>now live: CRED payback</Text>
-              <Text style={styles.paybackSubText}>
-                pay bills & earn rewards worth ₹...
-              </Text>
-              <TouchableOpacity activeOpacity={0.8} style={{ alignSelf: 'flex-start' }}>
+              <Text style={styles.paybackTitle}>₹40 claimed. ₹60 left to claim.</Text>
+              <TouchableOpacity activeOpacity={0.8} style={styles.useCredUpiBtn}>
                 <LinearGradient
-                  colors={['#ffe066', '#ffc107']}
-                  style={styles.playNowBtnSmall}
+                  colors={['#f6d365', '#fda085']}
+                  style={styles.useCredUpiGradient}
+                  start={{ x: 0, y: 0 }}
+                  end={{ x: 1, y: 0 }}
                 >
-                  <Text style={styles.playNowText}>Claim now</Text>
+                  <Text style={styles.useCredUpiText}>use CRED UPI</Text>
                 </LinearGradient>
               </TouchableOpacity>
             </View>
           </View>
         </LinearGradient>
 
-        {/* Garage Hero Banner */}
-        <View style={styles.garageSection}>
-          <Text style={styles.garageWatermark}>garage</Text>
-          <View style={styles.garageHeroCardWrapper}>
-            <View style={styles.garageHeroCard}>
-              <Image
-                source={{ uri: 'https://picsum.photos/seed/watch/400/400' }}
-                style={styles.garageImage}
-              />
+
+        {/* Store Landing Section */}
+        <View style={styles.storeContainer}>
+          <Text style={styles.storeTitle}>store</Text>
+          <View style={styles.productCard}>
+            <Image
+              source={require('../assets/images/banner1.jpeg')} // Placeholder for backpack/store product
+              style={styles.productImage}
+              resizeMode="cover"
+            />
+            <View style={styles.productInfo}>
+              <Text style={styles.unlockedTitle}>unlocked for you</Text>
+              <Text style={styles.discountText}>up to 80% off on most loved brands</Text>
+              <TouchableOpacity style={styles.shopNowBtn}>
+                <Text style={styles.shopNowText}>Shop now</Text>
+              </TouchableOpacity>
+            </View>
+            {/* Pagination dots */}
+            <View style={styles.paginationDots}>
+              <View style={[styles.dot, styles.dotActive]} />
+              <View style={styles.dot} />
+              <View style={styles.dot} />
+              <View style={styles.dot} />
             </View>
           </View>
-
-          <Text style={styles.garageHeroTitle}>
-            stand a chance to win an{"\n"}Apple watch
-          </Text>
-          <Text style={styles.garageHeroSub}>claim this reward on CRED garage</Text>
-          <TouchableOpacity activeOpacity={0.8} style={styles.claimNowBtnDark}>
-            <Text style={styles.playNowTextWhite}>Claim now</Text>
-          </TouchableOpacity>
         </View>
 
         <View style={styles.sectionHeader}>
@@ -290,7 +291,7 @@ const HomeScreen: React.FC = () => {
         </View>
         {/* Quick Access */}
         <View style={styles.quickAccessList}>
-          <TouchableOpacity style={styles.quickAccessItem}>
+          <TouchableOpacity style={styles.quickAccessItem} onPress={() => navigation.navigate('PaymentHistory')}>
             <FileText color="#333" size={20} />
             <Text style={styles.quickAccessText}>payment history</Text>
             <ChevronRight color="#666" size={20} />
@@ -336,24 +337,24 @@ const styles = StyleSheet.create({
   headerLeft: {
     flexDirection: 'row',
     alignItems: 'center',
+    gap: 10,
   },
   avatar: {
     width: 48,
     height: 48,
     borderRadius: 24,
-    marginRight: 10,
-    borderWidth: 2,
-    borderColor: '#e0e0e0',
+    // marginRight: 10,
+    marginTop: -4
   },
   greetingText: {
     fontSize: 14,
     color: '#666',
-    fontWeight: '500',
+    fontFamily: 'Poppins-Regular',
   },
   nameText: {
-    fontSize: 18,
+    fontSize: 16,
     color: '#000',
-    fontWeight: '700',
+    fontFamily: 'Poppins-Medium',
   },
   bellContainer: {
     padding: 8,
@@ -368,36 +369,81 @@ const styles = StyleSheet.create({
   },
   badge: {
     position: 'absolute',
-    top: 6,
-    right: 8,
-    width: 10,
-    height: 10,
-    borderRadius: 5,
+    top: 0,
+    right: 0,
+    width: 18,
+    height: 18,
+    borderRadius: 9,
     backgroundColor: '#e53935',
-    borderWidth: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderWidth: 1.5,
     borderColor: '#fff',
   },
+  badgeText: {
+    color: '#fff',
+    fontSize: 10,
+    fontWeight: 'bold',
+  },
   rewardBanner: {
-    marginHorizontal: 20,
-    borderRadius: 16,
+    marginHorizontal: 16,
+    borderRadius: 20,
     padding: 20,
-    marginBottom: 25,
+    marginBottom: 30,
     overflow: 'hidden',
+    elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
   },
   rewardContent: {
     flexDirection: 'row',
     alignItems: 'center',
   },
   rewardLeft: {
-    marginRight: 20,
+    marginRight: 15,
   },
-  chestImage: {
-    width: 80,
-    height: 80,
-    borderRadius: 40,
+  chestImageBanner: {
+    width: '90%',
+    height: 100,
+    alignSelf: 'center',
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    marginVertical: 20,
+    borderRadius: 5
   },
   rewardRight: {
     flex: 1,
+  },
+  unclaimedText: {
+    color: '#fff',
+    fontSize: 15,
+    fontFamily: 'Poppins-Medium',
+    lineHeight: 20,
+  },
+  rewardSubText: {
+    color: 'rgba(255,255,255,0.6)',
+    fontSize: 13,
+    marginBottom: 12,
+  },
+  claimNowBtnWrapper: {
+    alignSelf: 'flex-start',
+  },
+  claimNowBtn: {
+    paddingHorizontal: 20,
+    paddingVertical: 8,
+    borderRadius: 4,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+  claimNowText: {
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Poppins-Bold',
   },
   claimText: {
     color: '#fff',
@@ -456,7 +502,7 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: 12,
-    fontWeight: '700',
+    fontFamily: 'Poppins-Bold',
     color: '#666',
     letterSpacing: 1,
   },
@@ -475,104 +521,135 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: '#fff',
     borderWidth: 1,
-    borderColor: '#e0e0e0',
-    borderRadius: 30,
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    marginRight: 10,
+    borderColor: '#f0f0f0',
+    borderRadius: 50, // More rounded
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+    marginRight: 12,
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 3 },
-    shadowOpacity: 0.06,
-    shadowRadius: 6,
-    elevation: 4,
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 5,
+    elevation: 2,
   },
   pillCardText: {
     fontWeight: '700',
-    fontSize: 14,
+    fontSize: 10,
     marginLeft: 8,
-    color: '#111',
+    color: '#000',
+    fontFamily: 'Poppins-Medium'
   },
-  greenText: {
-    color: '#4caf50',
-    fontWeight: '700',
-    fontSize: 14,
-    marginLeft: 8,
-  },
-  subText: {
+  setupNowText: {
     color: '#999',
-    fontSize: 14,
-    marginLeft: 6,
+    fontSize: 10,
+    marginLeft: 10,
+    marginRight: 4,
+    fontFamily: 'Poppins-Medium'
+  },
+  checkBaText: {
+    color: '#999',
+    fontSize: 9,
+    marginLeft: 10,
+    fontFamily: 'Poppins-Regular'
   },
   billsCard: {
-    marginHorizontal: 20,
+    marginHorizontal: 16,
     backgroundColor: '#fff',
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
-    elevation: 10,
+    borderRadius: 12, // Slightly more subtle radius
+    elevation: 4, // Lower elevation for subtle CRED shadow
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.1,
-    shadowRadius: 14,
-    marginBottom: 35,
+    shadowOffset: { width: 0, height: 8 },
+    shadowOpacity: 0.04,
+    shadowRadius: 12,
+    marginBottom: 30,
     overflow: 'hidden',
+    borderWidth: 1,
+    borderColor: '#f8f8f8',
   },
   billItem: {
     flexDirection: 'row',
-    padding: 15,
+    padding: 20,
     alignItems: 'center',
   },
-  billIconContainer: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#f5f5f5',
+  billIconCircle: {
+    width: 48,
+    height: 48,
+    borderRadius: 24,
+    backgroundColor: '#fff', // White background for the circle
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 12,
-  },
-  billIconContainer2: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#ffebee',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: 12,
+    marginRight: 15,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
   },
   billInfo: {
     flex: 1,
   },
   billName: {
     fontWeight: '700',
-    fontSize: 14,
-    color: '#111',
-    marginBottom: 2,
+    fontSize: 10,
+    color: '#000',
+    marginBottom: 4,
+    fontFamily: 'Poppins-Medium'
   },
   billDesc: {
-    color: '#999',
-    fontSize: 12,
+    color: '#888',
+    fontSize: 10,
+    fontFamily: 'Poppins-Regular'
   },
   billAction: {
     alignItems: 'flex-end',
   },
-  payBtnDark: {
-    backgroundColor: '#111',
-    paddingHorizontal: 18,
-    paddingVertical: 10,
-    borderRadius: 4,
+  payBtnBlack: {
+    backgroundColor: '#000',
+    paddingHorizontal: 24,
+    paddingVertical: 12,
+    borderRadius: 6, // Matches the reference image button radius
     marginBottom: 6,
   },
   payBtnText: {
     color: '#fff',
-    fontWeight: '700',
-    fontSize: 12,
-  },
-  dueText: {
+    // fontWeight: '700',
     fontSize: 10,
-    color: '#e53935',
-    fontWeight: '600',
-    textTransform: 'uppercase',
+    fontFamily: 'Poppins-Medium'
+  },
+  overdueText: {
+    fontSize: 10,
+    color: '#ff5252',
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'lowercase',
+  },
+  dueSoonText: {
+    fontSize: 10,
+    color: '#ffa000',
+    fontFamily: 'Poppins-Regular',
+    textTransform: 'lowercase',
+  },
+  dividerLight: {
+    height: 1,
+    backgroundColor: '#f5f5f5',
+    marginHorizontal: 20,
+  },
+  cashbackFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f9f9f9',
+    padding: 15,
+    justifyContent: 'center',
+    borderTopWidth: 1,
+    borderTopColor: '#f1f1f1',
+  },
+  cashbackIcon: {
+    width: 20,
+    height: 20,
+    borderRadius: 4,
+    marginRight: 8,
+  },
+  cashbackText: {
+    fontSize: 12,
+    color: '#555',
+    fontFamily: 'Poppins-Medium',
+    marginRight: 4,
   },
   divider: {
     height: 1,
@@ -605,27 +682,27 @@ const styles = StyleSheet.create({
     width: (width - 40) / 4,
   },
   circleIcon: {
-    width: 64,
-    height: 64,
-    borderRadius: 32,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#fff',
-    borderWidth: 1,
-    borderColor: '#f0f0f0',
     justifyContent: 'center',
     alignItems: 'center',
-    marginBottom: 8,
+    marginBottom: 10,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
     shadowColor: '#000',
-    shadowOffset: { width: 0, height: 6 },
-    shadowOpacity: 0.08,
-    shadowRadius: 10,
-    elevation: 8,
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.05,
+    shadowRadius: 8,
+    elevation: 4,
   },
   circleLabel: {
     textAlign: 'center',
-    fontSize: 12,
-    fontWeight: '600',
+    fontSize: 11,
+    fontFamily: 'Poppins-Medium',
     color: '#111',
-    lineHeight: 16,
+    lineHeight: 15,
   },
   exploreTagsContainer: {
     paddingHorizontal: 20,
@@ -655,9 +732,42 @@ const styles = StyleSheet.create({
   },
   pillTagText: {
     fontWeight: '700',
-    fontSize: 14,
-    color: '#111',
+    fontSize: 13,
+    color: '#000',
     marginLeft: 6,
+  },
+  upiIdBar: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginHorizontal: 16,
+    marginBottom: 40,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+    borderStyle: 'dashed',
+    borderRadius: 4,
+  },
+  upiIdLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
+  },
+  upiIdText: {
+    fontSize: 12,
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
+  },
+  upiSafety: {
+    borderLeftWidth: 1,
+    borderLeftColor: '#eee',
+    paddingLeft: 12,
+  },
+  upiSafetyText: {
+    fontSize: 11,
+    color: '#555',
+    fontFamily: 'Poppins-Medium',
   },
   cibilBadge: {
     backgroundColor: '#e8eaf6',
@@ -671,10 +781,37 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
   paybackBanner: {
-    marginHorizontal: 20,
-    borderRadius: 16,
-    padding: 20,
-    marginBottom: 35,
+    marginHorizontal: 16,
+    borderRadius: 20,
+    padding: 24,
+    marginBottom: 50,
+  },
+  paybackLeft: {
+    marginRight: 20,
+  },
+  paybackLogo: {
+    width: 60,
+    height: 80,
+    borderRadius: 8,
+  },
+  paybackTitle: {
+    color: '#fff',
+    fontSize: 16,
+    fontFamily: 'Poppins-Regular',
+    marginBottom: 15,
+  },
+  useCredUpiBtn: {
+    alignSelf: 'flex-start',
+  },
+  useCredUpiGradient: {
+    paddingHorizontal: 20,
+    paddingVertical: 10,
+    borderRadius: 4,
+  },
+  useCredUpiText: {
+    color: '#000',
+    fontSize: 12,
+    fontFamily: 'Poppins-Bold',
   },
   paybackContent: {
     flexDirection: 'row',
@@ -782,8 +919,8 @@ const styles = StyleSheet.create({
   quickAccessText: {
     flex: 1,
     marginLeft: 15,
-    fontSize: 14,
-    fontWeight: '600',
+    fontSize: 12,
+    fontFamily: 'Poppins-Medium',
     color: '#333',
   },
   dashedDivider: {
@@ -794,6 +931,77 @@ const styles = StyleSheet.create({
     marginLeft: 35,
   },
   bottomSpacer: {
-    height: 40,
+    height: 100,
+  },
+  storeContainer: {
+    paddingHorizontal: 16,
+    marginBottom: 60,
+  },
+  storeTitle: {
+    fontSize: 40,
+    fontFamily: Platform.OS === 'ios' ? 'Georgia' : 'serif',
+    color: '#f0f0f0',
+    textAlign: 'center',
+    marginBottom: -20,
+    zIndex: -1,
+  },
+  productCard: {
+    backgroundColor: '#fff',
+    borderRadius: 20,
+    overflow: 'hidden',
+    // elevation: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.1,
+    shadowRadius: 20,
+    borderWidth: 1,
+    borderColor: '#f5f5f5',
+  },
+  productImage: {
+    width: '100%',
+    height: 150,
+  },
+  productInfo: {
+    alignItems: 'center',
+    padding: 30,
+  },
+  unlockedTitle: {
+    fontSize: 22,
+    fontFamily: 'Poppins-Bold',
+    color: '#000',
+    marginBottom: 8,
+  },
+  discountText: {
+    fontSize: 14,
+    color: '#666',
+    fontFamily: 'Poppins-Regular',
+    marginBottom: 20,
+    textAlign: 'center',
+  },
+  shopNowBtn: {
+    backgroundColor: '#000',
+    paddingHorizontal: 40,
+    paddingVertical: 12,
+    borderRadius: 4,
+  },
+  shopNowText: {
+    color: '#fff',
+    fontSize: 14,
+    fontFamily: 'Poppins-Bold',
+  },
+  paginationDots: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    gap: 6,
+    marginBottom: 20,
+  },
+  dot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#eee',
+  },
+  dotActive: {
+    backgroundColor: '#aaa',
   },
 });

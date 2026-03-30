@@ -33,6 +33,7 @@ import {
   Ticket,
   MessageSquare,
   Settings,
+  MessageSquareMore,
 } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
@@ -41,7 +42,7 @@ const { width } = Dimensions.get('window');
 type ActionItemType = {
   id: string;
   label: string;
-  icon: JSX.Element;
+  icon: React.ReactElement;
   routeName?: string;
 };
 
@@ -79,7 +80,7 @@ const SECTIONS_MIDDLE: AppSection[] = [
       { id: '8', label: 'bank\nbalance', icon: <FastForward {...iconProps} /> },
       { id: '9', label: 'bank\naccounts', icon: <Building2 {...iconProps} /> },
       { id: '10', label: 'gold', icon: <Gem {...iconProps} /> },
-      { id: '11', label: 'CRED wallet', icon: <LayoutTemplate {...iconProps} /> },
+      { id: '11', label: 'CRED wallet', icon: <LayoutTemplate {...iconProps} />, routeName: 'Pan' },
     ],
   },
   {
@@ -121,6 +122,7 @@ const SECTIONS_MIDDLE: AppSection[] = [
       { id: '25', label: 'support', icon: <MessageSquare {...iconProps} /> },
       { id: '26', label: 'payment\nhistory', icon: <History {...iconProps} /> },
       { id: '27', label: 'settings', icon: <Settings {...iconProps} /> },
+      { id: '28', label: 'profile', icon: <User {...iconProps} />, routeName: 'Profile' },
     ],
   },
 ];
@@ -132,8 +134,8 @@ const ActionGrid = ({ data }: { data: ActionItemType[] }) => {
     <View style={styles.gridContainer}>
       {data.map((item) => (
         <View key={item.id} style={styles.gridItemWrapper}>
-          <TouchableOpacity 
-            activeOpacity={0.7} 
+          <TouchableOpacity
+            activeOpacity={0.7}
             style={styles.circleOuter}
             onPress={() => item.routeName ? navigation.navigate(item.routeName) : null}
           >
@@ -147,6 +149,7 @@ const ActionGrid = ({ data }: { data: ActionItemType[] }) => {
 };
 
 const MoreScreen: React.FC = () => {
+  const navigation = useNavigation<any>();
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
       <ScrollView
@@ -161,12 +164,14 @@ const MoreScreen: React.FC = () => {
             <Text style={styles.credTitle}>CRED</Text>
           </View>
           <View style={styles.headerRight}>
-            <Image
-              source={{ uri: 'https://i.pravatar.cc/100?img=5' }}
-              style={styles.avatarImage}
-            />
+            <TouchableOpacity onPress={() => (navigation as any).navigate('Profile')} activeOpacity={0.8}>
+              <Image
+                source={require('../assets/images/user.jpeg')}
+                style={styles.avatarImage}
+              />
+            </TouchableOpacity>
             <TouchableOpacity style={styles.supportButton}>
-              <MessageSquare size={16} color="#222" strokeWidth={2} />
+              <MessageSquareMore color='#000' size={14} />
               <Text style={styles.supportButtonText}>support</Text>
             </TouchableOpacity>
           </View>
