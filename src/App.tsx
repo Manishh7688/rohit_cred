@@ -14,6 +14,8 @@ import ProfileScreen from './screens/ProfileScreen';
 import SplashScreen from './screens/SplashScreen';
 import PanScreen from './screens/PanScreen';
 import EducationScreen from './screens/EducationScreen';
+import ContactScreen from './screens/ContactScreen';
+import PaymentDetailScreen from './screens/PaymentDetailScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -32,11 +34,16 @@ function App(): React.JSX.Element {
       // translucent={true}
       />
       <NavigationContainer>
-        <Stack.Navigator initialRouteName="Education">
+        <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen
             name="Education"
             component={EducationScreen}
             options={{ headerShown: false, presentation: 'modal', animation: 'slide_from_bottom', }}
+          />
+          <Stack.Screen
+            name="Contact"
+            component={ContactScreen}
+            options={{ headerShown: false }}
           />
           <Stack.Screen
             name="Pan"
@@ -46,7 +53,11 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="Splash"
             component={SplashScreen}
-            options={{ headerShown: false }}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
           />
           <Stack.Screen
             name="MainTabs"
@@ -65,6 +76,14 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="Profile"
             component={ProfileScreen}
+            options={{
+              headerShown: false,
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="PaymentDetail"
+            component={PaymentDetailScreen}
             options={{
               headerShown: false,
               animation: 'slide_from_bottom',

@@ -186,28 +186,11 @@ const MoreScreen: React.FC = () => {
         ))}
 
         {/* Promo Banner */}
-        <View style={styles.promoWrapper}>
-          <View style={styles.promoCard}>
-            <View style={styles.promoTextCol}>
-              <Text style={styles.promoValidText}>VALID TILL 31ST MARCH</Text>
-              <Text style={styles.promoMainText}>
-                withdraw now. start your EMI in May.
-              </Text>
-              <TouchableOpacity activeOpacity={0.8} style={styles.checkOfferBtn}>
-                <Text style={styles.checkOfferText}>Check offer</Text>
-              </TouchableOpacity>
-            </View>
-            <View style={styles.promoImageWrapper}>
-              {/* Dummy placeholder for calendar/money illustration */}
-              <Image
-                source={{
-                  uri: 'https://picsum.photos/seed/promo/200/200',
-                }}
-                style={styles.promoHeroImg}
-              />
-            </View>
-          </View>
-        </View>
+        <Image
+          source={require('../assets/images/paynow1.png')} // Placeholder for 3D chest
+          style={styles.chestImageBanner}
+          resizeMode="stretch"
+        />
 
         {/* Remaining Sections */}
         {SECTIONS_MIDDLE.map((section) => (
@@ -409,4 +392,12 @@ const styles = StyleSheet.create({
     // Note: use a generic dummy representation as requested!
     resizeMode: 'contain',
   },
+  chestImageBanner: {
+    width: '90%',
+    height: 100,
+    resizeMode: 'contain',
+    borderRadius: 5,
+    marginBottom: 20,
+    alignSelf: 'center',
+  }
 });

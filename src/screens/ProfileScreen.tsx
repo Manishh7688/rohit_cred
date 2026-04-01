@@ -14,7 +14,7 @@ import {
   NativeSyntheticEvent,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { MessageSquareMore, Pencil, Car, Gift, Shield } from 'lucide-react-native';
+import { MessageSquareMore, Pencil, Landmark, CheckCircle2, IndianRupee, ChevronsRight } from 'lucide-react-native';
 
 // ── helpers ──────────────────────────────────────────────────────────────────
 
@@ -30,14 +30,18 @@ const ArrowRight = () => (
 
 interface MenuRowProps {
   label: string;
+  subtitle?: string;
   rightText?: string;
-  hasArrow?: boolean;   // → arrow (for stats rows)
-  rightLabel?: string;  // extra right label
+  hasArrow?: boolean;
+  onpress?: () => void;
 }
 
-const MenuRow = ({ label, rightText, hasArrow = false }: MenuRowProps) => (
-  <TouchableOpacity style={styles.menuRow} activeOpacity={0.6}>
-    <Text style={styles.menuRowLabel}>{label}</Text>
+const MenuRow = ({ label, subtitle, rightText, hasArrow = false, onpress }: MenuRowProps) => (
+  <TouchableOpacity style={styles.menuRow} activeOpacity={0.6} onPress={onpress}>
+    <View style={styles.menuRowLeft}>
+      <Text style={[styles.menuRowLabel, subtitle ? { marginBottom: 2 } : null]}>{label}</Text>
+      {subtitle ? <Text style={styles.menuRowSub}>{subtitle}</Text> : null}
+    </View>
     <View style={styles.menuRowRight}>
       {rightText ? <Text style={styles.menuRowValue}>{rightText}</Text> : null}
       {hasArrow ? <ArrowRight /> : <ChevronRight />}
@@ -46,21 +50,30 @@ const MenuRow = ({ label, rightText, hasArrow = false }: MenuRowProps) => (
 );
 
 interface StatRowProps {
-  icon: string;
+  icon: React.ReactNode;
   label: string;
-  value: string;
+  subLabel?: string;
+  subLabelColor?: string;
+  value?: string;
 }
 
-const StatRow = ({ icon, label, value }: StatRowProps) => (
+const StatRow = ({ icon, label, subLabel, subLabelColor, value }: StatRowProps) => (
   <TouchableOpacity style={styles.statRow} activeOpacity={0.6}>
     <View style={styles.statLeft}>
       <View style={styles.statIconCircle}>
-        <Text style={styles.statIcon}>{icon}</Text>
+        {icon}
       </View>
-      <Text style={styles.statLabel}>{label}</Text>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        <Text style={styles.statLabel}>{label}</Text>
+        {subLabel && (
+          <Text style={[styles.statLabel, { color: subLabelColor || '#888' }]}>
+            {subLabel}
+          </Text>
+        )}
+      </View>
     </View>
     <View style={styles.statRight}>
-      <Text style={styles.statValue}>{value}</Text>
+      {value ? <Text style={styles.statValue}>{value}</Text> : null}
       <ArrowRight />
     </View>
   </TouchableOpacity>
@@ -74,83 +87,25 @@ const SectionHeader = ({ title }: SectionHeaderProps) => (
   <Text style={styles.sectionHeader}>{title}</Text>
 );
 
-// ── banner data ───────────────────────────────────────────────────────────────
+// ── banner ───────────────────────────────────────────────────────────────
 
-const BANNERS = [
-  {
-    id: '1',
-    icon: <Car color="#fff" size={20} />,
-    subtitle: 'get to know your vehicles, inside out',
-    link: 'CRED garage',
-  },
-  {
-    id: '2',
-    icon: <Gift color="#fff" size={20} />,
-    subtitle: 'share & earn rewards with friends',
-    link: 'refer and earn',
-  },
-  {
-    id: '3',
-    icon: <Shield color="#fff" size={20} />,
-    subtitle: 'secure your account from fraud',
-    link: 'CRED protect',
-  },
-];
-
-const BANNER_WIDTH = Dimensions.get('window').width - 32; // 16 margin each side
-
-const PromoBannerCarousel = () => {
-  const [activeIndex, setActiveIndex] = useState(0);
-  const scrollRef = useRef<ScrollView>(null);
-
-  const handleScroll = (e: NativeSyntheticEvent<NativeScrollEvent>) => {
-    const index = Math.round(e.nativeEvent.contentOffset.x / BANNER_WIDTH);
-    setActiveIndex(index);
-  };
-
+const CredMoneyBanner = () => {
   return (
-    <View>
-      <ScrollView
-        ref={scrollRef}
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        onMomentumScrollEnd={handleScroll}
-        snapToInterval={BANNER_WIDTH + 14}
-        decelerationRate="fast"
-        contentContainerStyle={{ paddingHorizontal: 16, gap: 14 }}
-        style={{ width: Dimensions.get('window').width }}
-      >
-        {BANNERS.map((banner) => (
-          <TouchableOpacity
-            key={banner.id}
-            activeOpacity={1}
-            style={[styles.promoBanner, { width: BANNER_WIDTH }]}
-          >
-            <View style={styles.promoIconCircle}>
-              {banner.icon}
-            </View>
-            <View style={styles.promoTextWrap}>
-              <Text style={styles.promoSubtitle}>{banner.subtitle}</Text>
-              <View style={styles.promoLinkRow}>
-                <Text style={styles.promoLink}>{banner.link}</Text>
-                <View style={{ transform: [{ rotate: '180deg' }] }}>
-                  <ArrowIcon color="#fff" width={25} />
-                </View>
-              </View>
-            </View>
-          </TouchableOpacity>
-        ))}
-      </ScrollView>
-
-      {/* Dot indicator */}
-      <View style={styles.dotRow}>
-        {BANNERS.map((_, i) => (
-          <View
-            key={i}
-            style={[styles.dot, i === activeIndex ? styles.dotActive : styles.dotInactive]}
-          />
-        ))}
-      </View>
+    <View style={{ paddingHorizontal: 20, marginVertical: 10 }}>
+      <TouchableOpacity activeOpacity={0.8} style={styles.moneyBanner}>
+        <View style={styles.moneyBannerLeft}>
+          <View style={styles.moneyBannerIcon}>
+            <Landmark color="#fff" size={18} />
+          </View>
+        </View>
+        <View style={styles.moneyBannerTextWrap}>
+          <Text style={styles.moneyBannerSubtitle}>track all your bank accounts</Text>
+          <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
+            <Text style={styles.moneyBannerTitle}>Access CRED money</Text>
+            <ArrowRight />
+          </View>
+        </View>
+      </TouchableOpacity>
     </View>
   );
 };
@@ -182,56 +137,74 @@ const ProfileScreen = () => {
         <View style={styles.profileHeader}>
           <View style={styles.avatarWrap}>
             <Image
-              source={{ uri: 'https://picsum.photos/seed/profile/200' }}
+              source={require('../assets/images/user.jpeg')}
               style={styles.avatar}
             />
           </View>
           <View style={styles.profileInfo}>
-            <Text style={styles.profileName}>Aarti goyal</Text>
-            <Text style={styles.profileSince}>member since Apr, 2022</Text>
+            <Text style={styles.profileName}>Shivam Bansal</Text>
+            <Text style={styles.profileSince}>member since Dec, 2019</Text>
           </View>
           <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
             <Pencil color='#fff' size={14} />
           </TouchableOpacity>
         </View>
 
-        {/* ── Promo Banner (scrollable) ── */}
-        <PromoBannerCarousel />
+        {/* ── Promo Banner ── */}
+        <CredMoneyBanner />
 
         {/* ── Stats ── */}
         <View style={styles.divider} />
-        <StatRow icon="✦" label="credit score" value="748" />
+        <StatRow
+          icon={<CheckCircle2 color="#888" size={14} />}
+          label="credit score "
+          subLabel="• REFRESH AVAILABLE"
+          subLabelColor="#4caf50"
+        />
         <View style={styles.divider} />
-        <StatRow icon="₹" label="lifetime cashback" value="₹818" />
+        <StatRow
+          icon={<IndianRupee color="#888" size={14} />}
+          label="lifetime cashback"
+          value="₹498"
+        />
         <View style={styles.divider} />
-        <StatRow icon="𝙥" label="bank balance" value="check" />
-        <View style={styles.divider} />
+        <StatRow
+          icon={<ChevronsRight color="#888" size={14} />}
+          label="bank balance"
+          value="check"
+        />
+        {/* <View style={styles.divider} /> */}
 
         {/* ── Your Rewards & Benefits ── */}
         <SectionHeader title="YOUR REWARDS & BENEFITS" />
 
-        <MenuRow label="cashback balance" rightText="" />
-        <Text style={styles.menuRowSub}>₹14</Text>
+        <MenuRow label="cashback balance" subtitle="₹157" />
         <View style={styles.divider} />
 
-        <MenuRow label="coins" rightText="" />
-        <Text style={styles.menuRowSub}>2,53,981</Text>
+        <MenuRow label="coins" subtitle="3,07,022" />
         <View style={styles.divider} />
 
-        <MenuRow label="win assured ₹200" rightText="" />
-        <Text style={styles.menuRowSub}>refer and earn</Text>
-        <View style={styles.divider} />
+        <MenuRow label="win assured ₹200" subtitle="refer and earn" />
+        {/* <View style={styles.divider} /> */}
 
         {/* ── Transactions & Support ── */}
         <SectionHeader title="TRANSACTIONS & SUPPORT" />
-        <MenuRow label="all transactions" />
+        <MenuRow label="all transactions" onpress={() => navigation.navigate('PaymentHistory')} />
         <View style={styles.divider} />
-        <MenuRow label="use RuPay credit cards for UPI transactions" />
-        <View style={styles.divider} />
-        <MenuRow label="brand permissions" />
-        <View style={styles.divider} />
+        <MenuRow label="access support" />
+        {/* <View style={styles.divider} /> */}
 
-        {/* ── Account Settings ── */}
+        {/* ── Transactions & Support ── */}
+        <SectionHeader title="PAYMENT & BANK ACCOUNT" />
+        <MenuRow label="UPI settings" />
+        <View style={styles.divider} />
+        <MenuRow label="token management" />
+        <View style={styles.divider} />
+        <MenuRow label="instant refund account setup" />
+        <View style={styles.divider} />
+        <MenuRow label="use RuPay credit card for UPI transactions" />
+        {/* <View style={styles.divider} /> */}
+        {/* ── Transactions & Support ── */}
         <SectionHeader title="ACCOUNT SETTINGS" />
         <MenuRow label="manage autopay" />
         <View style={styles.divider} />
@@ -240,11 +213,9 @@ const ProfileScreen = () => {
         <MenuRow label="manage account" />
         <View style={styles.divider} />
         <MenuRow label="manage addresses" />
-        <View style={styles.divider} />
 
-        {/* ── About ── */}
         <SectionHeader title="ABOUT" />
-        <MenuRow label="terms and conditions" />
+        <MenuRow label="terms & conditions" />
         <View style={styles.divider} />
         <MenuRow label="privacy policy" />
         <View style={styles.divider} />
@@ -254,9 +225,7 @@ const ProfileScreen = () => {
         <View style={styles.divider} />
         <MenuRow label="open source licenses" />
         <View style={styles.divider} />
-        <MenuRow label="UPI FAQs and grievances" />
-        <View style={styles.divider} />
-
+        <MenuRow label="UPI FAQs and grievance" />
         {/* Bottom home bar spacing */}
         <View style={{ height: 30 }} />
         {/* <View style={styles.homeBar} /> */}
@@ -346,7 +315,7 @@ const styles = StyleSheet.create({
   },
   profileName: {
     color: '#fff',
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Poppins-Bold',
     marginBottom: 3,
   },
@@ -369,67 +338,42 @@ const styles = StyleSheet.create({
     fontSize: 16,
   },
 
-  // ── Promo Banner ──
-  promoBanner: {
+  // ── Banner ──
+  moneyBanner: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#0f0f0f',
-    borderRadius: 8,
-    paddingVertical: 14,
+    backgroundColor: '#151515',
+    borderRadius: 4,
+    paddingVertical: 18,
     paddingHorizontal: 16,
     gap: 14,
     borderWidth: 1,
-    borderColor: '#222',
+    borderColor: '#262626',
   },
-  promoIconCircle: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    backgroundColor: '#1a1a1a',
+  moneyBannerLeft: {
     justifyContent: 'center',
     alignItems: 'center',
   },
-  promoIconText: {
-    fontSize: 20,
+  moneyBannerIcon: {
+    width: 36,
+    height: 36,
+    borderRadius: 18,
+    backgroundColor: '#262626',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  promoTextWrap: {
+  moneyBannerTextWrap: {
     flex: 1,
   },
-  promoSubtitle: {
+  moneyBannerSubtitle: {
     color: '#888',
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
-    marginBottom: 4,
   },
-  promoLinkRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 10,
-  },
-  promoLink: {
+  moneyBannerTitle: {
     color: '#fff',
-    fontSize: 10,
+    fontSize: 14,
     fontFamily: 'Poppins-SemiBold',
-  },
-
-  // ── Dots ──
-  dotRow: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    gap: 6,
-    marginTop: 10,
-    marginBottom: 10,
-  },
-  dot: {
-    width: 4,
-    height: 4,
-    borderRadius: 2,
-  },
-  dotActive: {
-    backgroundColor: '#fff',
-  },
-  dotInactive: {
-    backgroundColor: '#444',
   },
 
   // ── Divider ──
@@ -484,7 +428,7 @@ const styles = StyleSheet.create({
   sectionHeader: {
     color: '#555',
     fontSize: 11,
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Poppins-Medium',
     letterSpacing: 1.2,
     paddingHorizontal: 20,
     paddingTop: 28,
@@ -497,14 +441,16 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 16,
+    paddingVertical: 18,
     paddingHorizontal: 20,
+  },
+  menuRowLeft: {
+    flex: 1,
   },
   menuRowLabel: {
     color: '#ddd',
-    fontSize: 14,
+    fontSize: 12,
     fontFamily: 'Poppins-Regular',
-    flex: 1,
   },
   menuRowRight: {
     flexDirection: 'row',
@@ -513,28 +459,25 @@ const styles = StyleSheet.create({
   },
   menuRowValue: {
     color: '#888',
-    fontSize: 10,
+    fontSize: 11,
     fontFamily: 'Poppins-Regular',
   },
   menuRowSub: {
-    color: '#666',
+    color: '#777',
     fontSize: 12,
     fontFamily: 'Poppins-Regular',
-    paddingHorizontal: 20,
-    marginTop: -10,
-    marginBottom: 8,
   },
 
   // ── Arrows / Chevrons ──
   chevron: {
     color: '#555',
-    fontSize: 22,
+    fontSize: 24,
     fontFamily: 'Poppins-Light',
     lineHeight: 22,
   },
   arrowRight: {
     color: '#666',
-    fontSize: 14,
+    fontSize: 16,
     fontFamily: 'Poppins-Light',
   },
 

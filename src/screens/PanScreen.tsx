@@ -62,7 +62,7 @@ const PanScreen: React.FC = ({ navigation }: any) => {
         </LinearGradient>
 
         {/* Action Button */}
-        <TouchableOpacity style={styles.button} activeOpacity={0.8} onPress={() => navigation.navigate('Education')}>
+        <TouchableOpacity style={styles.button} activeOpacity={0.8} >
           <Text style={styles.buttonText}>Confirm and proceed</Text>
           <View style={{ transform: [{ rotate: '180deg' }] }}>
             <ArrowIcon color="#fff" />
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
     height: '40%'
   },
   headerSpacer: {
-    height: 80, // Adjust based on how far down the text is supposed to be
+    height: '70%', // Adjust based on how far down the text is supposed to be
   },
   title: {
     fontFamily: 'CirkaRegular400', // Assuming this is the serif font name from assets

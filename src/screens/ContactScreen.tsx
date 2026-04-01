@@ -1,96 +1,66 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, TextInput, Image, ScrollView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, StatusBar, Dimensions } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Search, UserSquare, Landmark, ChevronsRight, ArrowRight, MessageSquare, FileClock, GraduationCap, ChevronRight, Book } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import {
+  ArrowLeft, UserSquare, Landmark, ChevronsRight, ChevronRight,
+  Book, GraduationCap, FileClock, MessageSquare, ArrowRight
+} from 'lucide-react-native';
 import ArrowIcon from '../components/ArrowIcon';
 
 const { width } = Dimensions.get('window');
 
-const EducationScreen: React.FC = () => {
+const TUTORS = [
+  { id: '1', name: 'Harnoor Kaur Gulati', sub: 'French CBSE', img: 'https://picsum.photos/seed/harnoor/200' },
+  { id: '2', name: 'S Anup Kumar', sub: 'Pain Management', img: 'https://picsum.photos/seed/anup/200' },
+  { id: '3', name: 'Jessica Roshni\nBenedict', sub: 'Piano', img: 'https://picsum.photos/seed/jessica/200' },
+  { id: '4', name: 'Swarupa Santhosh', sub: 'Yoga', img: 'https://picsum.photos/seed/swarupa/200' },
+];
+
+const ContactScreen: React.FC = () => {
   const navigation = useNavigation();
-  const TUTORS = [
-    { id: '1', name: 'Harnoor Kaur Gulati', sub: 'French CBSE', img: 'https://picsum.photos/seed/harnoor/200' },
-    { id: '2', name: 'S Anup Kumar', sub: 'Pain Management', img: 'https://picsum.photos/seed/anup/200' },
-    { id: '3', name: 'Jessica Roshni\nBenedict', sub: 'Piano', img: 'https://picsum.photos/seed/jessica/200' },
-    { id: '4', name: 'Swarupa Santhosh', sub: 'Yoga', img: 'https://picsum.photos/seed/swarupa/200' },
-  ];
 
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
-      <StatusBar backgroundColor="#fff" barStyle={'dark-content'} />
+      <StatusBar backgroundColor="#fff" barStyle="dark-content" />
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 
-        {/* Header with Back Arrow */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        {/* Header */}
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()} activeOpacity={0.7}>
           <ArrowIcon color="#1a1a1a" />
         </TouchableOpacity>
 
-        {/* Title */}
-        <Text style={styles.title}>
-          <Text style={[styles.title, { fontFamily: 'Poppins-Medium' }]}>Shivam</Text>, pay all your{'\n'}education-related expenses
-        </Text>
-
-
-        {/* Search Bar */}
-        <View style={styles.searchContainer}>
-          <Search color="#999" size={20} style={styles.searchIcon} />
-          <TextInput
-            style={styles.searchInput}
-            placeholder="search verified tutors"
-            placeholderTextColor="#b0b0b0"
-            autoCorrect={false}
-          />
-        </View>
-
-        {/* Promotional Banner */}
-        <Image
-          source={require('../assets/images/paynow2.png')} // Placeholder for 3D chest
-          style={styles.chestImageBanner}
-          resizeMode="stretch"
-        />
-
-        {/* ADD A TUTOR Section */}
+        {/* ADD A TUTOR */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>ADD A TUTOR</Text>
         </View>
-
-        {/* Actions Grid */}
-        <View style={styles.actionsGrid}>
-          {/* Pay Contacts */}
-          <TouchableOpacity style={styles.actionItem} onPress={() => navigation.navigate('Contact')}>
-            <View style={styles.iconCircle}>
+        <View style={styles.addTutorGrid}>
+          <TouchableOpacity style={styles.addTutorItem} activeOpacity={0.7}>
+            <View style={styles.addTutorCircle}>
               <UserSquare color="#000" size={26} strokeWidth={1.5} />
             </View>
-            <Text style={styles.actionText}>Pay contacts</Text>
+            <Text style={styles.addTutorText}>Pay contacts</Text>
           </TouchableOpacity>
-
-          {/* Bank Account */}
-          <TouchableOpacity style={styles.actionItem}>
-            <View style={styles.iconCircle}>
+          <TouchableOpacity style={styles.addTutorItem} activeOpacity={0.7}>
+            <View style={styles.addTutorCircle}>
               <Landmark color="#000" size={26} strokeWidth={1.5} />
             </View>
-            <Text style={styles.actionText}>Bank account</Text>
+            <Text style={styles.addTutorText}>Bank account</Text>
           </TouchableOpacity>
-
-          {/* Pay to UPI ID */}
-          <TouchableOpacity style={styles.actionItem}>
-            <View style={styles.iconCircle}>
-              {/* Approximating the double arrow box icon from the specific custom asset */}
+          <TouchableOpacity style={styles.addTutorItem} activeOpacity={0.7}>
+            <View style={styles.addTutorCircle}>
               <View style={styles.squareIconOutline}>
                 <ChevronsRight color="#000" size={20} strokeWidth={1.5} />
               </View>
             </View>
-            <Text style={styles.actionText}>Pay to UPI ID</Text>
+            <Text style={styles.addTutorText}>Pay to UPI ID</Text>
           </TouchableOpacity>
         </View>
 
-        {/* 1-CLICK PAYMENTS Section */}
+        {/* 1-CLICK PAYMENTS */}
         <View style={styles.sectionHeader}>
           <Text style={styles.sectionTitle}>1-CLICK PAYMENTS</Text>
         </View>
-
-        {/* Further content can go here */}
         <View style={styles.listCard}>
           <View style={styles.listItem}>
             <View style={[styles.avatarCircle, { backgroundColor: '#aee4ea' }]}>
@@ -166,8 +136,7 @@ const EducationScreen: React.FC = () => {
               <View style={styles.tutorImageWrap}>
                 <Image source={{ uri: tutor.img }} style={styles.tutorImage} />
                 <View style={styles.tutorVerifiedBadge}>
-                  <Image source={require('../assets/images/check.jpeg')} style={{ width: 15, height: 15 }} />
-                  {/* <Text style={{ color: '#fff', fontSize: 10, lineHeight: 10, textAlign: 'center' }}>✓</Text> */}
+                  <Text style={{ color: '#fff', fontSize: 10, lineHeight: 10, textAlign: 'center' }}>✓</Text>
                 </View>
               </View>
               <Text style={styles.tutorName} numberOfLines={2}>{tutor.name}</Text>
@@ -263,151 +232,27 @@ const EducationScreen: React.FC = () => {
           <Text style={styles.footerBrandTxt}>VISA</Text>
           <Text style={[styles.footerBrandTxt, { color: '#d48a27' }]}>RuPay</Text>
         </View>
-
       </ScrollView>
     </SafeAreaView>
   );
 };
 
-export default EducationScreen;
+export default ContactScreen;
 
 const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  container: {
-    paddingHorizontal: 24,
-    paddingTop: 16,
-    paddingBottom: 40,
-  },
-  backButton: {
-    marginBottom: 24,
-  },
-  title: {
-    fontFamily: 'CirkaRegular400',
-    fontSize: 28,
-    color: '#0a0a0a',
-    lineHeight: 34,
-    marginBottom: 28,
-  },
-  searchContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    borderWidth: 1,
-    borderColor: '#e8e8e8',
-    borderRadius: 30,
-    paddingHorizontal: 16,
-    height: 52,
-    marginBottom: 32,
-    backgroundColor: '#fff',
-  },
-  searchIcon: {
-    marginRight: 12,
-  },
-  searchInput: {
-    flex: 1,
-    fontFamily: 'Poppins-Regular',
-    fontSize: 15,
-    color: '#333',
-    padding: 0, // needed for Android to align centered properly
-  },
-  bannerContainer: {
-    marginBottom: 40,
-    borderRadius: 12,
-    overflow: 'hidden',
-    height: 140, // Reduced from 160 to match image aspect somewhat
-    backgroundColor: '#ba9779', // Matches the prominent shade of the banner
-  },
-  bannerBackground: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  bannerContent: {
-    flex: 1,
-    padding: 20,
-    justifyContent: 'center',
-  },
-  bannerTitle: {
-    fontFamily: 'CirkaRegular400',
-    fontSize: 18,
-    color: '#fff',
-    lineHeight: 22,
-    marginBottom: 16,
-  },
-  bannerButton: {
-    backgroundColor: '#fff',
-    paddingHorizontal: 16,
-    paddingVertical: 6,
-    alignSelf: 'flex-start',
-    borderRadius: 2, // slightly rounded or sharp
-  },
-  bannerButtonText: {
-    fontFamily: 'Poppins-Bold',
-    fontSize: 10,
-    color: '#000',
-  },
-  bannerImage: {
-    position: 'absolute',
-    right: -20,
-    bottom: -10,
-    width: 140,
-    height: 130,
-    opacity: 0.9,
-  },
-  sectionHeader: {
-    marginBottom: 24,
-    marginTop: 20
-  },
-  sectionTitle: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 11,
-    color: '#8b8f9e',
-    letterSpacing: 2,
-  },
-  actionsGrid: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 45,
-  },
-  actionItem: {
-    alignItems: 'center',
-    width: width / 3.5,
-  },
-  iconCircle: {
-    width: 76,
-    height: 76,
-    borderRadius: 38,
-    borderWidth: 1,
-    borderColor: '#eaeaea',
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginBottom: 12,
-  },
-  squareIconOutline: {
-    borderWidth: 1.5,
-    borderColor: '#000',
-    borderRadius: 4,
-    width: 28,
-    height: 28,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingLeft: 2, // To center the chevron visually
-  },
-  actionText: {
-    fontFamily: 'Poppins-Medium',
-    fontSize: 12,
-    color: '#1a1a1a',
-    textAlign: 'center',
-  },
-  chestImageBanner: {
-    width: '100%',
-    height: 140,
-    borderRadius: 12,
-    marginBottom: 40,
-  },
+  safeArea: { flex: 1, backgroundColor: '#fafafa' },
+  container: { paddingHorizontal: 20, paddingTop: 16, paddingBottom: 60, backgroundColor: '#fafafa' },
+  backButton: { marginBottom: 30 },
+  sectionHeader: { marginBottom: 16, marginTop: 30 },
+  sectionTitle: { fontFamily: 'Poppins-Medium', fontSize: 11, color: '#888', letterSpacing: 1.5, textTransform: 'uppercase' },
+
+  // ADD A TUTOR
+  addTutorGrid: { flexDirection: 'row', justifyContent: 'space-between' },
+  addTutorItem: { alignItems: 'center', width: width / 3.5 },
+  addTutorCircle: { width: 76, height: 76, borderRadius: 38, borderWidth: 1, borderColor: '#eaeaea', backgroundColor: '#fff', alignItems: 'center', justifyContent: 'center', marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 8, elevation: 2 },
+  squareIconOutline: { borderWidth: 1.5, borderColor: '#000', borderRadius: 4, width: 28, height: 28, alignItems: 'center', justifyContent: 'center', paddingLeft: 2 },
+  addTutorText: { fontFamily: 'Poppins-Medium', fontSize: 12, color: '#1a1a1a', textAlign: 'center' },
+
   // List Card (1-click payments & unverified)
   listCard: { backgroundColor: '#fff', borderRadius: 12, borderWidth: 1, borderColor: '#f0f0f0', shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.03, shadowRadius: 10, elevation: 1 },
   listItem: { flexDirection: 'row', alignItems: 'center', padding: 16 },
@@ -428,7 +273,7 @@ const styles = StyleSheet.create({
   tutorBadgeText: { fontFamily: 'Poppins-Regular', fontSize: 9, color: '#666' },
   tutorImageWrap: { width: 66, height: 66, borderRadius: 33, marginBottom: 12, marginTop: 10 },
   tutorImage: { width: 66, height: 66, borderRadius: 33, backgroundColor: '#eee' },
-  tutorVerifiedBadge: { position: 'absolute', top: 0, right: 0, width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
+  tutorVerifiedBadge: { position: 'absolute', top: 0, right: 0, backgroundColor: '#8a4af3', width: 20, height: 20, borderRadius: 10, borderWidth: 2, borderColor: '#fff', alignItems: 'center', justifyContent: 'center' },
   tutorName: { fontFamily: 'Poppins-Medium', fontSize: 12, color: '#111', textAlign: 'center', marginBottom: 2, height: 36 },
   tutorSub: { fontFamily: 'Poppins-Regular', fontSize: 10, color: '#888', textAlign: 'center', marginBottom: 16 },
   viewProfileBtn: { backgroundColor: '#000', borderRadius: 20, width: '100%', paddingVertical: 10, alignItems: 'center' },

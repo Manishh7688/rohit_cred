@@ -120,11 +120,12 @@ const PaymentHistoryScreen = () => {
         case 'zomato': return require('../assets/images/zomato.png');
         case 'zepto': return require('../assets/images/zepto.png');
         case 'blinkit': return require('../assets/images/blinkit.png');
-        case 'rent': return require('../assets/images/rent.png');
+        case 'rent': return require('../assets/images/ghar.jpeg');
         case 'hdfc': return require('../assets/images/hdfc.png');
         case 'urban': return require('../assets/images/urbancompany.webp');
-        case 'mygate': return require('../assets/images/mygate.webp');
-        case 'education': return require('../assets/images/book.png');
+        case 'mygate': return require('../assets/images/mig.jpeg');
+        case 'education': return require('../assets/images/copy.jpeg');
+        case 'card': return require('../assets/images/tokk.jpeg');
 
         default: return null;
       }
@@ -152,41 +153,46 @@ const PaymentHistoryScreen = () => {
         {showMonthHeader && (
           <Text style={styles.monthHeader}>{item.monthGroup}</Text>
         )}
-        <View style={styles.transactionCard}>
-          <View style={styles.cardLeft}>
-            {renderIcon(item.iconType, item.vendor)}
-            <View style={styles.cardContent}>
-              <Text style={styles.vendorText}>{item.vendor}</Text>
-              <View style={styles.statusRow}>
-                {item.status === 'FAILED' ? (
-                  <XCircle size={14} color="#D32F2F" fill="#FFEBEE" />
-                ) : (
-                  <CheckCircle2 size={14} color="#388E3C" fill="#E8F5E9" />
-                )}
-                <Text style={styles.dateText}>{item.dateStr}</Text>
-              </View>
-              {item.status === 'FAILED' && (
-                <View style={styles.failedBadge}>
-                  <Text style={styles.failedText}>PAYMENT FAILED</Text>
+        <TouchableOpacity
+          activeOpacity={0.7}
+          onPress={() => navigation.navigate('Education')}
+        >
+          <View style={styles.transactionCard}>
+            <View style={styles.cardLeft}>
+              {renderIcon(item.iconType, item.vendor)}
+              <View style={styles.cardContent}>
+                <Text style={styles.vendorText}>{item.vendor}</Text>
+                <View style={styles.statusRow}>
+                  {item.status === 'FAILED' ? (
+                    <XCircle size={14} color="#fff" fill="#D32F2F" />
+                  ) : (
+                    <CheckCircle2 size={14} color="#fff" fill="#388E3C" />
+                  )}
+                  <Text style={styles.dateText}>{item.dateStr}</Text>
                 </View>
+                {item.status === 'FAILED' && (
+                  <View style={styles.failedBadge}>
+                    <Text style={styles.failedText}>PAYMENT FAILED</Text>
+                  </View>
+                )}
+              </View>
+            </View>
+            <View style={styles.cardRight}>
+              <Text style={styles.amountText}>
+                ₹
+                {item.amount.toLocaleString('en-IN', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </Text>
+              {item.status === 'FAILED' && (
+                <TouchableOpacity style={styles.supportMiniBtn}>
+                  <Headphones size={14} color="#666" />
+                </TouchableOpacity>
               )}
             </View>
           </View>
-          <View style={styles.cardRight}>
-            <Text style={styles.amountText}>
-              ₹
-              {item.amount.toLocaleString('en-IN', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2,
-              })}
-            </Text>
-            {item.status === 'FAILED' && (
-              <TouchableOpacity style={styles.supportMiniBtn}>
-                <Headphones size={14} color="#666" />
-              </TouchableOpacity>
-            )}
-          </View>
-        </View>
+        </TouchableOpacity>
         <View style={styles.divider} />
       </View>
     );
