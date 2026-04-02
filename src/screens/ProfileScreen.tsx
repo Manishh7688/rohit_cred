@@ -29,8 +29,8 @@ const ArrowRight = () => (
 // ── sub-components ────────────────────────────────────────────────────────────
 
 interface MenuRowProps {
-  label: string;
-  subtitle?: string;
+  label: React.ReactNode;
+  subtitle?: React.ReactNode;
   rightText?: string;
   hasArrow?: boolean;
   onpress?: () => void;
@@ -39,8 +39,20 @@ interface MenuRowProps {
 const MenuRow = ({ label, subtitle, rightText, hasArrow = false, onpress }: MenuRowProps) => (
   <TouchableOpacity style={styles.menuRow} activeOpacity={0.6} onPress={onpress}>
     <View style={styles.menuRowLeft}>
-      <Text style={[styles.menuRowLabel, subtitle ? { marginBottom: 2 } : null]}>{label}</Text>
-      {subtitle ? <Text style={styles.menuRowSub}>{subtitle}</Text> : null}
+      <View>
+        {typeof label === 'string' ? (
+          <Text style={[styles.menuRowLabel, subtitle ? { marginBottom: 2 } : null]}>{label}</Text>
+        ) : (
+          label
+        )}
+      </View>
+      {subtitle ? (
+        typeof subtitle === 'string' ? (
+          <Text style={styles.menuRowSub}>{subtitle}</Text>
+        ) : (
+          subtitle
+        )
+      ) : null}
     </View>
     <View style={styles.menuRowRight}>
       {rightText ? <Text style={styles.menuRowValue}>{rightText}</Text> : null}
@@ -54,7 +66,7 @@ interface StatRowProps {
   label: string;
   subLabel?: string;
   subLabelColor?: string;
-  value?: string;
+  value?: React.ReactNode;
 }
 
 const StatRow = ({ icon, label, subLabel, subLabelColor, value }: StatRowProps) => (
@@ -73,7 +85,13 @@ const StatRow = ({ icon, label, subLabel, subLabelColor, value }: StatRowProps) 
       </View>
     </View>
     <View style={styles.statRight}>
-      {value ? <Text style={styles.statValue}>{value}</Text> : null}
+      {value ? (
+        typeof value === 'string' ? (
+          <Text style={styles.statValue}>{value}</Text>
+        ) : (
+          value
+        )
+      ) : null}
       <ArrowRight />
     </View>
   </TouchableOpacity>
@@ -165,7 +183,12 @@ const ProfileScreen = () => {
         <StatRow
           icon={<IndianRupee color="#888" size={14} />}
           label="lifetime cashback"
-          value="₹498"
+          value={
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IndianRupee color="#fff" size={10} strokeWidth={3} />
+              <Text style={styles.statValue}>498</Text>
+            </View>
+          }
         />
         <View style={styles.divider} />
         <StatRow
@@ -178,13 +201,30 @@ const ProfileScreen = () => {
         {/* ── Your Rewards & Benefits ── */}
         <SectionHeader title="YOUR REWARDS & BENEFITS" />
 
-        <MenuRow label="cashback balance" subtitle="₹157" />
+        <MenuRow
+          label="cashback balance"
+          subtitle={
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <IndianRupee color="#777" size={10} strokeWidth={3} />
+              <Text style={styles.menuRowSub}>157</Text>
+            </View>
+          }
+        />
         <View style={styles.divider} />
 
         <MenuRow label="coins" subtitle="3,07,022" />
         <View style={styles.divider} />
 
-        <MenuRow label="win assured ₹200" subtitle="refer and earn" />
+        <MenuRow
+          label={
+            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+              <Text style={styles.menuRowLabel}>win assured </Text>
+              <IndianRupee color="#ddd" size={10} strokeWidth={3} />
+              <Text style={styles.menuRowLabel}>200</Text>
+            </View>
+          }
+          subtitle="refer and earn"
+        />
         {/* <View style={styles.divider} /> */}
 
         {/* ── Transactions & Support ── */}

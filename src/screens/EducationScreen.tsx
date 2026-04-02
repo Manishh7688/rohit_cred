@@ -1,7 +1,7 @@
 import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Dimensions, TextInput, Image, ScrollView, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { ArrowLeft, Search, UserSquare, Landmark, ChevronsRight, ArrowRight, MessageSquare, FileClock, GraduationCap, ChevronRight, Book } from 'lucide-react-native';
+import { IndianRupee, ArrowLeft, Search, UserSquare, Landmark, ChevronsRight, ArrowRight, MessageSquare, FileClock, GraduationCap, ChevronRight, Book } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import LinearGradient from 'react-native-linear-gradient';
 import ArrowIcon from '../components/ArrowIcon';
@@ -98,7 +98,11 @@ const EducationScreen: React.FC = () => {
             </View>
             <View style={styles.listTextWrap}>
               <Text style={styles.listName}>Alok Maheshwari Huf</Text>
-              <Text style={styles.listSub}>tuition fees • ₹8,400</Text>
+              <View style={styles.subTextRow}>
+                <Text style={styles.listSub}>tuition fees • </Text>
+                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <Text style={styles.listSub}>8,400</Text>
+              </View>
             </View>
             <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
               <Text style={styles.blackBtnText}>Pay now</Text>
@@ -112,7 +116,11 @@ const EducationScreen: React.FC = () => {
             </View>
             <View style={styles.listTextWrap}>
               <Text style={styles.listName}>Kaushalya Wo Tarsee...</Text>
-              <Text style={styles.listSub}>tuition fees • ₹25,200</Text>
+              <View style={styles.subTextRow}>
+                <Text style={styles.listSub}>tuition fees • </Text>
+                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <Text style={styles.listSub}>25,200</Text>
+              </View>
             </View>
             <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
               <Text style={styles.blackBtnText}>Pay now</Text>
@@ -424,6 +432,10 @@ const styles = StyleSheet.create({
   listTextWrap: { flex: 1, justifyContent: 'center' },
   listName: { fontFamily: 'Poppins-Medium', fontSize: 13, color: '#111', marginBottom: 2 },
   listSub: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#888' },
+  subTextRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   listSubOrange: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#d27c3a' },
   blackBtn: { backgroundColor: '#111', borderRadius: 4, paddingHorizontal: 16, paddingVertical: 8, minWidth: 70, alignItems: 'center' },
   blackBtnText: { fontFamily: 'Poppins-Medium', fontSize: 11, color: '#fff' },

@@ -12,6 +12,7 @@ import {
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import ArrowIcon from '../components/ArrowIcon';
+import { IndianRupee } from 'lucide-react-native';
 
 const { width } = Dimensions.get('window');
 
@@ -33,12 +34,16 @@ const PaymentDetailScreen = () => {
   const route = useRoute<RouteProp<RootStackParamList, 'PaymentDetail'>>();
   const { transaction } = route.params || {};
 
-  const LabelValue = ({ label, value, isBold = false, isGrayValue = false }: { label: string; value: string; isBold?: boolean; isGrayValue?: boolean }) => (
+  const LabelValue = ({ label, value, isBold = false, isGrayValue = false }: { label: string; value: React.ReactNode; isBold?: boolean; isGrayValue?: boolean }) => (
     <View style={styles.labelValueContainer}>
       <Text style={styles.fieldLabel}>{label}</Text>
-      <Text style={[styles.fieldValue, isBold && styles.fieldValueBold, isGrayValue && styles.fieldValueGray]}>
-        {value}
-      </Text>
+      {typeof value === 'string' ? (
+        <Text style={[styles.fieldValue, isBold && styles.fieldValueBold, isGrayValue && styles.fieldValueGray]}>
+          {value}
+        </Text>
+      ) : (
+        value
+      )}
     </View>
   );
 
@@ -64,7 +69,10 @@ const PaymentDetailScreen = () => {
             </View>
           </View>
 
-          <Text style={styles.amountValue}>₹{transaction?.amount?.toLocaleString('en-IN') || '8,400'}</Text>
+          <View style={styles.amountContainer}>
+            <IndianRupee size={28} color="#1a1a1a" strokeWidth={3} />
+            <Text style={styles.amountValue}>{transaction?.amount?.toLocaleString('en-IN') || '8,400'}</Text>
+          </View>
 
           <View style={styles.cardDivider} />
 
@@ -145,7 +153,14 @@ const PaymentDetailScreen = () => {
 
           <LabelValue
             label="total amount paid"
-            value={`₹${(transaction?.TransactionAmount || 8631).toLocaleString('en-IN')}`}
+            value={
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <IndianRupee size={14} color="#fff" strokeWidth={3} />
+                <Text style={[styles.fieldValue, styles.fieldValueBold]}>
+                  {(transaction?.TransactionAmount || 8631).toLocaleString('en-IN')}
+                </Text>
+              </View>
+            }
             isBold
           />
 
@@ -223,11 +238,16 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Bold',
     letterSpacing: 0.8,
   },
+  amountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 20,
+  },
   amountValue: {
     fontSize: 32,
     color: '#1a1a1a',
     fontFamily: 'Poppins-SemiBold',
-    marginBottom: 20,
+    marginLeft: 4,
   },
   cardDivider: {
     height: 1,

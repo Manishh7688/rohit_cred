@@ -7,7 +7,7 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
-import { ArrowLeft } from 'lucide-react-native';
+import { ArrowLeft, IndianRupee } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ArrowIcon from '../components/ArrowIcon';
@@ -54,7 +54,12 @@ const CredSupportScreen = ({ route }: { route: any }) => {
         showsVerticalScrollIndicator={false}
       >
         <ChatBubble
-          text={`Shivam, your payment of ₹${Item?.TransactionAmount} has been successfully deposited to your recipient's account on ${Item?.TransactionDate} with the UTR number as ${Item?.UtrNumber}`}
+          text={
+            <Text>
+              Shivam, your payment of <IndianRupee size={12} color="#333" strokeWidth={3} />
+              <Text>{Item?.TransactionAmount}</Text> has been successfully deposited to your recipient's account on {Item?.TransactionDate} with the UTR number as {Item?.UtrNumber}
+            </Text>
+          }
           time={`SUPPORT • ${Item?.BankConfirmationTime}`}
         />
 

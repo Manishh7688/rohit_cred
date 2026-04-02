@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { Shimmer } from '../components/Shimmer';
 import {
+  IndianRupee,
   ArrowLeft,
   Filter,
   ChevronDown,
@@ -146,12 +147,12 @@ const PaymentHistoryScreen = () => {
   };
 
   const renderItem = ({ item, index }: any) => {
-    const showMonthHeader =
-      index === 0 || transactions[index - 1].monthGroup !== item.monthGroup;
+    const isLastInMonth = index === transactions.length - 1 || transactions[index + 1].monthGroup !== item.monthGroup;
+    const isFirstInMonth = index === 0 || transactions[index - 1].monthGroup !== item.monthGroup;
 
     return (
       <View>
-        {showMonthHeader && (
+        {isFirstInMonth && (
           <Text style={styles.monthHeader}>{item.monthGroup}</Text>
         )}
         <TouchableOpacity
@@ -172,9 +173,9 @@ const PaymentHistoryScreen = () => {
                 <Text style={styles.vendorText}>{item.vendor}</Text>
                 <View style={styles.statusRow}>
                   {item.status === 'FAILED' ? (
-                    <XCircle size={14} color="#fff" fill="#D32F2F" />
+                    <XCircle size={16} color="#fff" fill="#F24534" />
                   ) : (
-                    <CheckCircle2 size={14} color="#fff" fill="#388E3C" />
+                    <CheckCircle2 size={16} color="#fff" fill="#388E3C" />
                   )}
                   <Text style={styles.dateText}>{item.dateStr}</Text>
                 </View>
@@ -186,13 +187,23 @@ const PaymentHistoryScreen = () => {
               </View>
             </View>
             <View style={styles.cardRight}>
-              <Text style={styles.amountText}>
-                ₹
-                {item.amount.toLocaleString('en-IN', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </Text>
+              <View style={styles.amountContainer}>
+                <IndianRupee size={12} color="#000" strokeWidth={3} style={{ marginBottom: 2 }} />
+                <Text style={styles.amountText}>
+                  {(() => {
+                    const parts = item.amount.toLocaleString('en-IN', {
+                      minimumFractionDigits: 2,
+                      maximumFractionDigits: 2,
+                    }).split('.');
+                    return (
+                      <>
+                        {parts[0]}
+                        <Text style={styles.decimalText}>.{parts[1]}</Text>
+                      </>
+                    );
+                  })()}
+                </Text>
+              </View>
               {item.status === 'FAILED' && (
                 <TouchableOpacity style={styles.supportMiniBtn}>
                   <Headphones size={14} color="#666" />
@@ -201,7 +212,11 @@ const PaymentHistoryScreen = () => {
             </View>
           </View>
         </TouchableOpacity>
-        <View style={styles.divider} />
+        {isLastInMonth ? (
+          <View style={styles.solidDivider} />
+        ) : (
+          <View style={styles.divider} />
+        )}
       </View>
     );
   };
@@ -452,33 +467,35 @@ const styles = StyleSheet.create({
     letterSpacing: 1.2,
   },
   monthHeader: {
-    marginTop: 35,
-    marginBottom: 20,
+    marginTop: 40,
+    marginBottom: 15,
     fontSize: 10,
     fontFamily: 'Poppins-Bold',
     color: '#999',
-    letterSpacing: 2,
+    letterSpacing: 2.2,
     textTransform: 'uppercase',
   },
   transactionCard: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    paddingVertical: 10,
+    // paddingVertical: 10,
+    alignItems: 'flex-start'
+
   },
   cardLeft: {
     flexDirection: 'row',
     flex: 1,
   },
   vendorIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
+    width: 60,
+    height: 60,
+    borderRadius: 30,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#f5f5f5',
     justifyContent: 'center',
     alignItems: 'center',
-    marginRight: 15,
+    marginRight: 10,
     overflow: 'hidden',
   },
   vendorImage: {
@@ -492,13 +509,13 @@ const styles = StyleSheet.create({
   },
   cardContent: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 5,
   },
   vendorText: {
-    fontSize: 14,
-    fontFamily: 'Poppins-Medium',
+    fontSize: 13,
+    fontFamily: 'Poppins-SemiBold',
     color: '#111',
-    lineHeight: 22,
+    // lineHeight: 22,
   },
   statusRow: {
     flexDirection: 'row',
@@ -529,11 +546,21 @@ const styles = StyleSheet.create({
     alignItems: 'flex-end',
     justifyContent: 'flex-start',
     minWidth: 90,
+    paddingTop: 5,
+  },
+  amountContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
   amountText: {
-    fontSize: 12,
+    fontSize: 13,
     fontFamily: 'Poppins-SemiBold',
     color: '#000',
+    // marginLeft: 2,
+  },
+  decimalText: {
+    color: '#000',
+    fontFamily: 'Poppins-Regular',
   },
   failedBadge: {
     backgroundColor: '#fff5f5',
@@ -543,12 +570,12 @@ const styles = StyleSheet.create({
     alignSelf: 'flex-start',
     marginTop: 8,
     borderWidth: 1,
-    borderColor: '#ffebee',
+    borderColor: '#FFE0DD',
   },
   failedText: {
     fontSize: 10,
     fontFamily: 'Poppins-Bold',
-    color: '#d32f2f',
+    color: '#F24534',
     letterSpacing: 0.5,
   },
   footerLogos: {
@@ -577,9 +604,14 @@ const styles = StyleSheet.create({
   divider: {
     height: 1,
     borderBottomWidth: 1,
-    borderColor: '#f0f0f0',
+    borderColor: '#efefef',
     borderStyle: 'dashed',
-    marginVertical: 12,
+    marginVertical: 14,
+  },
+  solidDivider: {
+    height: 1,
+    backgroundColor: '#f0f0f0',
+    marginVertical: 14,
   },
 
   // Modal Styles

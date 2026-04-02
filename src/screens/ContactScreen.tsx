@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, ScrollView, TouchableOpacity, Image, StatusBar,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import {
+  IndianRupee,
   ArrowLeft, UserSquare, Landmark, ChevronsRight, ChevronRight,
   Book, GraduationCap, FileClock, MessageSquare, ArrowRight
 } from 'lucide-react-native';
@@ -68,7 +69,11 @@ const ContactScreen: React.FC = () => {
             </View>
             <View style={styles.listTextWrap}>
               <Text style={styles.listName}>Alok Maheshwari Huf</Text>
-              <Text style={styles.listSub}>tuition fees • ₹8,400</Text>
+              <View style={styles.subTextRow}>
+                <Text style={styles.listSub}>tuition fees • </Text>
+                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <Text style={styles.listSub}>8,400</Text>
+              </View>
             </View>
             <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
               <Text style={styles.blackBtnText}>Pay now</Text>
@@ -82,7 +87,11 @@ const ContactScreen: React.FC = () => {
             </View>
             <View style={styles.listTextWrap}>
               <Text style={styles.listName}>Kaushalya Wo Tarsee...</Text>
-              <Text style={styles.listSub}>tuition fees • ₹25,200</Text>
+              <View style={styles.subTextRow}>
+                <Text style={styles.listSub}>tuition fees • </Text>
+                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <Text style={styles.listSub}>25,200</Text>
+              </View>
             </View>
             <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
               <Text style={styles.blackBtnText}>Pay now</Text>
@@ -261,6 +270,10 @@ const styles = StyleSheet.create({
   listTextWrap: { flex: 1, justifyContent: 'center' },
   listName: { fontFamily: 'Poppins-Medium', fontSize: 13, color: '#111', marginBottom: 2 },
   listSub: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#888' },
+  subTextRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
   listSubOrange: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#d27c3a' },
   blackBtn: { backgroundColor: '#111', borderRadius: 4, paddingHorizontal: 16, paddingVertical: 8, minWidth: 70, alignItems: 'center' },
   blackBtnText: { fontFamily: 'Poppins-Medium', fontSize: 11, color: '#fff' },
