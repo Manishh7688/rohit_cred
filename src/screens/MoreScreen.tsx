@@ -63,7 +63,7 @@ const SECTIONS_TOP: AppSection[] = [
     title: 'POPULAR',
     items: [
       { id: '1', label: 'bills &\nrecharges', icon: <FileText {...iconProps} /> },
-      { id: '2', label: 'pay\ncontacts', icon: <User {...iconProps} /> },
+      { id: '2', label: 'pay\ncontacts', icon: <User {...iconProps} />, routeName: 'Education' },
       { id: '3', label: 'education\nfees', icon: <BookOpen {...iconProps} /> },
       { id: '4', label: 'payment\nhistory', icon: <History {...iconProps} />, routeName: 'PaymentHistory' },
     ],
@@ -119,8 +119,8 @@ const SECTIONS_MIDDLE: AppSection[] = [
   {
     title: 'OTHERS',
     items: [
-      { id: '25', label: 'support', icon: <MessageSquare {...iconProps} /> },
-      { id: '26', label: 'payment\nhistory', icon: <History {...iconProps} /> },
+      { id: '25', label: 'support', icon: <MessageSquareMore {...iconProps} /> },
+      { id: '26', label: 'payment\nhistory', icon: <History {...iconProps} />, routeName: 'PaymentHistory' },
       { id: '27', label: 'settings', icon: <Settings {...iconProps} /> },
       { id: '28', label: 'profile', icon: <User {...iconProps} />, routeName: 'Profile' },
     ],
@@ -170,7 +170,10 @@ const MoreScreen: React.FC = () => {
                 style={styles.avatarImage}
               />
             </TouchableOpacity>
-            <TouchableOpacity style={styles.supportButton}>
+            <TouchableOpacity
+              style={styles.supportButton}
+              onPress={() => navigation.navigate('CredSupport')}
+            >
               <MessageSquareMore color='#000' size={14} />
               <Text style={styles.supportButtonText}>support</Text>
             </TouchableOpacity>
@@ -236,8 +239,8 @@ const styles = StyleSheet.create({
   },
   headerLeft: {},
   exploreText: {
-    fontSize: 18,
-    fontFamily: 'Poppins-Regular',
+    fontSize: 20,
+    fontFamily: 'CirkaRegular400',
     color: '#111',
     lineHeight: 24,
     marginBottom: -4,

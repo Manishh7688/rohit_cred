@@ -37,7 +37,7 @@ import {
 import { useNavigation } from '@react-navigation/native';
 
 const { width } = Dimensions.get('window');
-const BANNER_WIDTH = width;
+const BANNER_WIDTH = width * 0.75;
 const AUTO_PLAY_INTERVAL = 4000;
 
 interface BannerItem {
@@ -111,13 +111,13 @@ const HomeScreen: React.FC = () => {
     const index = Math.round(scrollPosition / BANNER_WIDTH);
 
     // Reset loop boundaries instantly without animation
-    if (scrollPosition <= 0) {
+    if (scrollPosition <= 10) { // Small buffer for jump
       flatListRef.current?.scrollToOffset({
         offset: BANNER_WIDTH * BANNERS_DATA.length,
         animated: false,
       });
       setActiveIndex(BANNERS_DATA.length);
-    } else if (scrollPosition >= BANNER_WIDTH * (INFINITE_DATA.length - 1)) {
+    } else if (scrollPosition >= BANNER_WIDTH * (INFINITE_DATA.length - 1) - 10) {
       flatListRef.current?.scrollToOffset({
         offset: BANNER_WIDTH,
         animated: false,
@@ -164,6 +164,29 @@ const HomeScreen: React.FC = () => {
         </View>
       </View>
     );
+  };
+
+
+  const onMomentumScrollEnd = (event) => {
+    const offsetX = event.nativeEvent.contentOffset.x;
+    const index = Math.round(offsetX / BANNER_WIDTH);
+
+    setActiveIndex(index);
+
+    // 👇 Jump logic (this creates loop illusion)
+    if (index === 0) {
+      flatListRef.current?.scrollToIndex({
+        index: BANNERS_DATA.length,
+        animated: false,
+      });
+      setActiveIndex(BANNERS_DATA.length);
+    } else if (index === INFINITE_DATA.length - 1) {
+      flatListRef.current?.scrollToIndex({
+        index: 1,
+        animated: false,
+      });
+      setActiveIndex(1);
+    }
   };
 
   return (
@@ -302,11 +325,16 @@ const HomeScreen: React.FC = () => {
             keyExtractor={(item, index) => `${item.id}-${index}`}
             renderItem={renderBannerCard}
             horizontal
-            pagingEnabled
+            pagingEnabled={false}
+            snapToInterval={BANNER_WIDTH}
+            snapToAlignment="center"
+            decelerationRate="fast"
             showsHorizontalScrollIndicator={false}
             onScroll={onScroll}
+            contentContainerStyle={{ paddingHorizontal: (width - BANNER_WIDTH) / 2 }}
+            onMomentumScrollEnd={onMomentumScrollEnd}
             scrollEventThrottle={16}
-            initialScrollIndex={1}
+            initialScrollIndex={2}
             getItemLayout={(data, index) => ({
               length: BANNER_WIDTH,
               offset: BANNER_WIDTH * index,
@@ -435,10 +463,10 @@ const styles = StyleSheet.create({
 
   // CAROUSEL STYLES
   carouselWrapper: { marginVertical: 10, height: 500, alignItems: 'center' },
-  bannerContainer: { width: BANNER_WIDTH, paddingHorizontal: 20, height: '100%', justifyContent: 'center' },
-  contentBanner: { alignItems: 'center', flex: 1 },
-  serifTitle: { fontFamily: 'Poppins-Bold', fontSize: 40, color: '#eee', marginBottom: -30, letterSpacing: 0.5 },
-  productCard: { width: '85%', height: 240, borderRadius: 12, backgroundColor: '#fff', elevation: 15, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 20, overflow: 'hidden', marginBottom: 25 },
+  bannerContainer: { width: BANNER_WIDTH, height: '100%', justifyContent: 'center', alignItems: 'center' },
+  contentBanner: { alignItems: 'center', flex: 1, width: '100%' },
+  serifTitle: { fontFamily: 'Poppins-Bold', fontSize: 40, color: '#f5f5f5', marginBottom: -30, letterSpacing: 0.5, opacity: 0.8 },
+  productCard: { width: '90%', height: 240, borderRadius: 12, backgroundColor: '#fff', elevation: 15, shadowColor: '#000', shadowOpacity: 0.1, shadowRadius: 20, overflow: 'hidden', marginBottom: 25, borderWidth: 1, borderColor: '#f0f0f0' },
   productImg: { width: '100%', height: '100%' },
   productMainTxt: { fontFamily: 'Poppins-Bold', fontSize: 14, color: '#111', textAlign: 'center', marginBottom: 4 },
   productSubTxt: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#666', textAlign: 'center', marginBottom: 20 },

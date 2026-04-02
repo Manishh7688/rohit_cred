@@ -16,6 +16,7 @@ import PanScreen from './screens/PanScreen';
 import EducationScreen from './screens/EducationScreen';
 import ContactScreen from './screens/ContactScreen';
 import PaymentDetailScreen from './screens/PaymentDetailScreen';
+import CredSupportScreen from './screens/CredSupportScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -43,7 +44,11 @@ function App(): React.JSX.Element {
           <Stack.Screen
             name="Contact"
             component={ContactScreen}
-            options={{ headerShown: false }}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
           />
           <Stack.Screen
             name="Pan"
@@ -86,6 +91,15 @@ function App(): React.JSX.Element {
             component={PaymentDetailScreen}
             options={{
               headerShown: false,
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="CredSupport"
+            component={CredSupportScreen}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
               animation: 'slide_from_bottom',
             }}
           />

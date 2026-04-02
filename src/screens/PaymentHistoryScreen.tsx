@@ -123,9 +123,10 @@ const PaymentHistoryScreen = () => {
         case 'rent': return require('../assets/images/ghar.jpeg');
         case 'hdfc': return require('../assets/images/hdfc.png');
         case 'urban': return require('../assets/images/urbancompany.webp');
-        case 'mygate': return require('../assets/images/mig.jpeg');
+        case 'mygate': return require('../assets/images/mm.jpeg');
         case 'education': return require('../assets/images/copy.jpeg');
         case 'card': return require('../assets/images/tokk.jpeg');
+        case 'swiggy': return require('../assets/images/instamart.jpeg');
 
         default: return null;
       }
@@ -144,7 +145,7 @@ const PaymentHistoryScreen = () => {
     return <InitialsIcon name={vendor} />;
   };
 
-  const renderItem = ({ item, index }: { item: Transaction; index: number }) => {
+  const renderItem = ({ item, index }: any) => {
     const showMonthHeader =
       index === 0 || transactions[index - 1].monthGroup !== item.monthGroup;
 
@@ -155,7 +156,14 @@ const PaymentHistoryScreen = () => {
         )}
         <TouchableOpacity
           activeOpacity={0.7}
-          onPress={() => navigation.navigate('Education')}
+          onPress={() => {
+            console.log(item?.TransactionDate, '.........................')
+            if (item.TransactionDate) {
+              navigation.navigate('PaymentDetail', { transaction: item })
+            } else {
+              navigation.navigate('Education', { transaction: item })
+            }
+          }}
         >
           <View style={styles.transactionCard}>
             <View style={styles.cardLeft}>

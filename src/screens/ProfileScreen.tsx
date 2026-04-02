@@ -89,7 +89,7 @@ const SectionHeader = ({ title }: SectionHeaderProps) => (
 
 // ── banner ───────────────────────────────────────────────────────────────
 
-const CredMoneyBanner = () => {
+const CredMoneyBanner = ({ onPress }: any) => {
   return (
     <View style={{ paddingHorizontal: 20, marginVertical: 10 }}>
       <TouchableOpacity activeOpacity={0.8} style={styles.moneyBanner}>
@@ -99,7 +99,7 @@ const CredMoneyBanner = () => {
           </View>
         </View>
         <View style={styles.moneyBannerTextWrap}>
-          <Text style={styles.moneyBannerSubtitle}>track all your bank accounts</Text>
+          <Text style={styles.moneyBannerSubtitle} onPress={onPress}>track all your bank accounts</Text>
           <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
             <Text style={styles.moneyBannerTitle}>Access CRED money</Text>
             <ArrowRight />
@@ -151,7 +151,7 @@ const ProfileScreen = () => {
         </View>
 
         {/* ── Promo Banner ── */}
-        <CredMoneyBanner />
+        <CredMoneyBanner onPress={() => navigation.navigate('PaymentHistory')} />
 
         {/* ── Stats ── */}
         <View style={styles.divider} />

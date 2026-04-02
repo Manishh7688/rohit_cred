@@ -45,7 +45,7 @@ const CardsScreen: React.FC = () => {
   ];
 
   const DO_MORE = [
-    { id: 'fees', title: 'FEES ON CREDIT', sub: 'pay tuition fees using your card', icon: <Image source={require('../assets/images/ww.png')} style={{ width: 24, height: 24, backgroundColor: '#fff' }} />, label: 'Explore' },
+    { id: 'fees', title: 'FEES ON CREDIT', sub: 'pay tuition fees using your card', icon: <Image source={require('../assets/images/mywall.png')} style={{ width: 24, height: 24, backgroundColor: '#fff' }} />, label: 'Explore' },
     { id: 'bills', title: 'CLEAR BILLS', sub: 'clear your bills & mobile recharges', icon: <Image source={require('../assets/images/ee.jpeg')} style={{ width: 24, height: 24 }} />, label: 'Pay now', hasFlash: true },
     { id: 'gift', title: 'GIFT CARDS', sub: 'buy gift cards for your loved ones', icon: <Image source={require('../assets/images/cc.png')} style={{ width: 24, height: 24 }} />, label: 'Explore' },
   ];

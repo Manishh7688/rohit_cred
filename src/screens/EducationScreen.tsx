@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, TextInput, Image,
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowLeft, Search, UserSquare, Landmark, ChevronsRight, ArrowRight, MessageSquare, FileClock, GraduationCap, ChevronRight, Book } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
+import LinearGradient from 'react-native-linear-gradient';
 import ArrowIcon from '../components/ArrowIcon';
 
 const { width } = Dimensions.get('window');
@@ -19,16 +20,15 @@ const EducationScreen: React.FC = () => {
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <StatusBar backgroundColor="#fff" barStyle={'dark-content'} />
+      {/* Header with Back Arrow */}
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+        <ArrowIcon color="#1a1a1a" />
+      </TouchableOpacity>
       <ScrollView contentContainerStyle={styles.container} showsVerticalScrollIndicator={false}>
 
-        {/* Header with Back Arrow */}
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
-          <ArrowIcon color="#1a1a1a" />
-        </TouchableOpacity>
 
         {/* Title */}
-        <Text style={styles.title}>
-          <Text style={[styles.title, { fontFamily: 'Poppins-Medium' }]}>Shivam</Text>, pay all your{'\n'}education-related expenses
+        <Text style={styles.title}>Shivam, pay all your{'\n'}education-related expenses
         </Text>
 
 
@@ -186,7 +186,12 @@ const EducationScreen: React.FC = () => {
 
         {/* Education Fees Banner Section */}
         <View style={styles.eduBannerWrap}>
-          <View style={styles.eduBannerGlow} />
+          <LinearGradient
+            colors={['#00000000', '#5e72e433', '#825ee433', '#00000000']}
+            start={{ x: 0.2, y: 0 }}
+            end={{ x: 0.8, y: 1 }}
+            style={styles.eduBannerGlow}
+          />
           <Text style={styles.eduBannerTitle}>pay education fees, effortlessly</Text>
 
           <TouchableOpacity style={styles.eduBannerCard} activeOpacity={0.8}>
@@ -216,12 +221,12 @@ const EducationScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>MORE ACTIONS</Text>
         </View>
         <View style={styles.actionList}>
-          <TouchableOpacity style={styles.actionRow} activeOpacity={0.7}>
+          <TouchableOpacity style={styles.actionRow} activeOpacity={0.7} onPress={() => navigation.navigate('PaymentHistory')}>
             <View style={styles.actionListIconWrap}>
               <FileClock color="#000" size={20} strokeWidth={1.5} />
             </View>
             <View style={styles.actionListTextWrap}>
-              <Text style={styles.actionListMain}>transaction history</Text>
+              <Text style={styles.actionListMain} >transaction history</Text>
               <Text style={styles.actionListSub}>see your transactions</Text>
             </View>
             <ArrowRight color="#1a1a1a" size={20} strokeWidth={1.5} />
@@ -282,10 +287,13 @@ const styles = StyleSheet.create({
     paddingBottom: 40,
   },
   backButton: {
-    marginBottom: 24,
+    // marginBottom: 24,
+    marginLeft: 24,
+    height: 50,
+    justifyContent: 'center'
   },
   title: {
-    fontFamily: 'CirkaRegular400',
+    fontFamily: 'CirkaBold700',
     fontSize: 28,
     color: '#0a0a0a',
     lineHeight: 34,
@@ -439,13 +447,34 @@ const styles = StyleSheet.create({
 
   // EDU BANNER SECTION
   eduBannerWrap: { marginTop: 40, marginBottom: 20 },
-  eduBannerGlow: { position: 'absolute', top: 30, left: 20, right: 20, height: 120, backgroundColor: '#eef2ff', borderRadius: 60, opacity: 0.8 },
-  eduBannerTitle: { fontFamily: 'CirkaRegular400', fontSize: 24, color: '#111', marginBottom: 20, letterSpacing: 0.2 },
-  eduBannerCard: { backgroundColor: '#fff', borderRadius: 14, padding: 16, flexDirection: 'row', alignItems: 'center', marginBottom: 12, shadowColor: '#000', shadowOffset: { width: 0, height: 4 }, shadowOpacity: 0.05, shadowRadius: 15, elevation: 3 },
-  eduBannerIconWrap: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: '#f0f0f0', alignItems: 'center', justifyContent: 'center', marginRight: 14 },
+  eduBannerGlow: {
+    position: 'absolute',
+    top: 100, // Centered between the two cards
+    left: -24,
+    right: -24,
+    height: 140, // Wider spread vertically
+    opacity: 0.8, // Slightly darker as requested
+  },
+  eduBannerTitle: { fontFamily: 'CirkaBold700', fontSize: 20, color: '#111', marginBottom: 20, letterSpacing: 0.2 },
+  eduBannerCard: {
+    backgroundColor: '#fff',
+    borderRadius: 14,
+    padding: 16,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 12,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 10 },
+    shadowOpacity: 0.05,
+    shadowRadius: 20,
+    elevation: 4,
+    borderWidth: 1,
+    borderColor: '#fcfcfc',
+  },
+  eduBannerIconWrap: { width: 42, height: 42, borderRadius: 21, borderWidth: 1, borderColor: '#f2f2f2', alignItems: 'center', justifyContent: 'center', marginRight: 14 },
   eduBannerTextWrap: { flex: 1 },
-  eduBannerMain: { fontFamily: 'Poppins-Medium', fontSize: 13, color: '#111', marginBottom: 2 },
-  eduBannerDesc: { fontFamily: 'Poppins-Regular', fontSize: 11, color: '#888' },
+  eduBannerMain: { fontFamily: 'Poppins-Medium', fontSize: 11, color: '#111', marginBottom: 2 },
+  eduBannerDesc: { fontFamily: 'Poppins-Regular', fontSize: 10, color: '#888' },
   eduBannerComingSoon: { fontFamily: 'Poppins-Medium', fontSize: 9, color: '#aaa', letterSpacing: 1 },
 
   // MORE ACTIONS
