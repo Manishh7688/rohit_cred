@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -6,8 +6,10 @@ import {
   TouchableOpacity,
   ScrollView,
   StatusBar,
+  Modal,
+  Pressable,
 } from 'react-native';
-import { ArrowLeft, IndianRupee } from 'lucide-react-native';
+import { ArrowLeft, IndianRupee, ThumbsUp, ThumbsDown } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import ArrowIcon from '../components/ArrowIcon';
@@ -15,6 +17,7 @@ import ArrowIcon from '../components/ArrowIcon';
 const CredSupportScreen = ({ route }: { route: any }) => {
   const navigation = useNavigation();
   const { Item } = route.params;
+  const [showHelpModal, setShowHelpModal] = useState(false);
 
   const ChatBubble = ({ text, time }: { text: string | React.ReactNode; time: string }) => (
     <View style={styles.messageWrapper}>
@@ -60,7 +63,10 @@ const CredSupportScreen = ({ route }: { route: any }) => {
               <Text>{Item?.TransactionAmount}</Text> has been successfully deposited to your recipient's account on {Item?.TransactionDate} with the UTR number as {Item?.UtrNumber}
             </Text>
           }
-          time={`SUPPORT • ${Item?.BankConfirmationTime}`}
+          time={`SUPPORT • ${new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}`}
         />
 
         <ChatBubble
@@ -73,18 +79,64 @@ const CredSupportScreen = ({ route }: { route: any }) => {
               <Text style={{ fontFamily: 'Poppins-Bold' }}>"DREAMPLUG"</Text> in your recipient's bank account
             </Text>
           }
-          time={`SUPPORT • ${Item?.BankConfirmationTime}`}
+          time={`SUPPORT • ${new Date().toLocaleTimeString([], {
+            hour: '2-digit',
+            minute: '2-digit',
+          })}`}
         />
         {/* Quick Actions Footer */}
         <View style={styles.footer}>
           <TouchableOpacity style={styles.actionButton} activeOpacity={0.8}>
             <Text style={styles.actionButtonText}>Payment is not reflecting</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.actionButtonSmall} activeOpacity={0.8}>
+          <TouchableOpacity
+            style={styles.actionButtonSmall}
+            activeOpacity={0.8}
+            onPress={() => setShowHelpModal(true)}
+          >
             <Text style={styles.actionButtonText}>Okay</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
+
+      {/* Feedback Modal */}
+      <Modal
+        visible={showHelpModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowHelpModal(false)}
+        statusBarTranslucent={true}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setShowHelpModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>was it helpful?</Text>
+              <Text style={styles.modalSubtitle}>your feedback will help us to serve you better</Text>
+
+              <View style={styles.modalButtonContainer}>
+                <TouchableOpacity
+                  style={styles.feedbackButton}
+                  onPress={() => setShowHelpModal(false)}
+                >
+                  <ThumbsUp size={18} color="#000" strokeWidth={2.5} />
+                  <Text style={styles.feedbackButtonText}>YES</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity
+                  style={styles.feedbackButton}
+                  onPress={() => setShowHelpModal(false)}
+                >
+                  <ThumbsDown size={18} color="#000" strokeWidth={2.5} />
+                  <Text style={styles.feedbackButtonText}>NO</Text>
+                </TouchableOpacity>
+              </View>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
 
     </SafeAreaView>
   );
@@ -171,7 +223,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Poppins-Medium',
     color: '#bbb',
     marginTop: 10,
-    marginLeft: 2,
+    marginLeft: 10,
     letterSpacing: 0.5,
   },
   footer: {
@@ -204,5 +256,56 @@ const styles = StyleSheet.create({
     fontSize: 12,
     fontFamily: 'Poppins-Medium',
     color: '#333',
+  },
+  // Modal Styles
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  modalContent: {
+    paddingTop: 30,
+    paddingBottom: 50,
+    paddingHorizontal: 25,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#000',
+    marginBottom: 8,
+  },
+  modalSubtitle: {
+    fontSize: 13,
+    fontFamily: 'cirkaRegular300',
+    color: '#888',
+    marginBottom: 30,
+    letterSpacing: -0.2,
+  },
+  modalButtonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  feedbackButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderWidth: 1,
+    borderColor: '#000',
+    borderRadius: 2,
+    width: '48%',
+    height: 80,
+  },
+  feedbackButtonText: {
+    fontSize: 12,
+    fontFamily: 'Poppins-Bold',
+    color: '#000',
+    marginLeft: 10,
+    letterSpacing: 1,
   },
 });

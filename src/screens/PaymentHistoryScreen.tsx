@@ -512,7 +512,7 @@ const styles = StyleSheet.create({
     paddingTop: 5,
   },
   vendorText: {
-    fontSize: 13,
+    fontSize: 11,
     fontFamily: 'Poppins-SemiBold',
     color: '#111',
     // lineHeight: 22,

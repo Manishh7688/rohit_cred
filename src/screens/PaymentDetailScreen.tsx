@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   View,
   Text,
@@ -8,11 +8,17 @@ import {
   StatusBar,
   Dimensions,
   Image,
+  Modal,
+  Pressable,
+  Platform,
+  PermissionsAndroid,
+  Alert,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import ArrowIcon from '../components/ArrowIcon';
-import { IndianRupee } from 'lucide-react-native';
+import { IndianRupee, FileDown } from 'lucide-react-native';
+import RNFS from 'react-native-fs';
 
 const { width } = Dimensions.get('window');
 
@@ -25,6 +31,8 @@ type RootStackParamList = {
       dateStr: string;
       status: 'COMPLETED' | 'FAILED';
       iconType?: string;
+      pdf?: any;
+      [key: string]: any;
     };
   };
 };
@@ -33,6 +41,7 @@ const PaymentDetailScreen = () => {
   const navigation = useNavigation();
   const route = useRoute<RouteProp<RootStackParamList, 'PaymentDetail'>>();
   const { transaction } = route.params || {};
+  const [showDownloadModal, setShowDownloadModal] = useState(false);
 
   const LabelValue = ({ label, value, isBold = false, isGrayValue = false }: { label: string; value: React.ReactNode; isBold?: boolean; isGrayValue?: boolean }) => (
     <View style={styles.labelValueContainer}>
@@ -46,6 +55,71 @@ const PaymentDetailScreen = () => {
       )}
     </View>
   );
+
+  const downloadPDF = async (pdfUri: any) => {
+    console.log("Original pdfUri (Resource ID):", pdfUri);
+
+    if (!pdfUri) {
+      Alert.alert('Error', 'No document found for this transaction');
+      return;
+    }
+
+    try {
+      // Resolve the require(path) into a valid source/URI
+      const asset = Image.resolveAssetSource(pdfUri);
+      let url = asset?.uri;
+
+      if (!url) {
+        Alert.alert('Error', 'Unable to resolve document path');
+        return;
+      }
+
+      // Fix for Android Emulators: redirect localhost to 10.0.2.2
+      if (Platform.OS === 'android' && url.includes('localhost')) {
+        url = url.replace('localhost', '10.0.2.2');
+      }
+
+      console.log("Resolved Download URL:", url);
+
+      // Dynamic naming based on transaction vendor or ID
+      const cleanedVendor = transaction?.vendor?.replace(/[^a-zA-Z0-9]/g, '_');
+      const fileName = `${cleanedVendor || 'receipt'}_${transaction?.id || 'doc'}.pdf`;
+
+      // Android path
+      const downloadPath =
+        Platform.OS === 'android'
+          ? `${RNFS.DownloadDirectoryPath}/${fileName}`
+          : `${RNFS.DocumentDirectoryPath}/${fileName}`;
+
+      // Ask permission (Android only)
+      if (Platform.OS === 'android' && Platform.Version < 33) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+        );
+
+        if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
+          Alert.alert('Permission Denied!', 'Storage access is required to save the document.');
+          return;
+        }
+      }
+
+      const result = await RNFS.downloadFile({
+        fromUrl: url,
+        toFile: downloadPath,
+        connectionTimeout: 15000,
+        readTimeout: 15000,
+      }).promise;
+
+      if (result.statusCode === 200) {
+        Alert.alert('Download Complete', `Saved to: Downloads/${fileName}`);
+      } else {
+        Alert.alert('Download Failed', `Status Code: ${result.statusCode}\n\nHint: Check if your Metro bundler is running.`);
+      }
+    } catch (error) {
+      console.log('PDF Download Error Detail:', error);
+      Alert.alert('Error', 'An error occurred while saving the file. Check the console for logs.');
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -70,7 +144,7 @@ const PaymentDetailScreen = () => {
           </View>
 
           <View style={styles.amountContainer}>
-            <IndianRupee size={28} color="#1a1a1a" strokeWidth={3} />
+            <IndianRupee size={28} color="#1a1a1a" strokeWidth={3} style={{ marginTop: -2 }} />
             <Text style={styles.amountValue}>{transaction?.amount?.toLocaleString('en-IN') || '8,400'}</Text>
           </View>
 
@@ -118,7 +192,10 @@ const PaymentDetailScreen = () => {
 
         {/* Action Buttons & Details */}
         <View style={styles.actionsContainer}>
-          <TouchableOpacity style={styles.downloadBtn}>
+          <TouchableOpacity
+            style={styles.downloadBtn}
+            onPress={() => setShowDownloadModal(true)}
+          >
             <Text style={styles.downloadBtnText}>Download documents</Text>
           </TouchableOpacity>
 
@@ -176,6 +253,53 @@ const PaymentDetailScreen = () => {
           </View>
         </View>
       </ScrollView>
+
+      {/* Download Documents Modal */}
+      <Modal
+        visible={showDownloadModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowDownloadModal(false)}
+        statusBarTranslucent={true}
+      >
+        <Pressable
+          style={styles.modalBackdrop}
+          onPress={() => setShowDownloadModal(false)}
+        >
+          <View style={styles.modalContainer}>
+            <View style={styles.modalContent}>
+              <Text style={styles.modalTitle}>select the document you{"\n"}want to download</Text>
+
+              <TouchableOpacity
+                style={styles.documentItem}
+                onPress={() => {
+                  setShowDownloadModal(false);
+                  downloadPDF(transaction?.pdf);
+                }}
+              >
+                <Text style={styles.documentItemText}>education receipt</Text>
+                <View style={styles.documentIconContainer}>
+                  <FileDown size={18} color="#888" strokeWidth={1.5} />
+                </View>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={styles.documentItem}
+                onPress={() => {
+                  setShowDownloadModal(false);
+                  downloadPDF(transaction?.pdf);
+                }}
+              >
+                <Text style={styles.documentItemText}>tax invoice</Text>
+                <View style={styles.documentIconContainer}>
+                  <FileDown size={18} color="#888" strokeWidth={1.5} />
+                </View>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </Pressable>
+      </Modal>
+
     </SafeAreaView>
   );
 };
@@ -441,5 +565,55 @@ const styles = StyleSheet.create({
     color: '#fff',
     fontSize: 12,
     fontFamily: 'Poppins-Bold',
+  },
+  // Modal Styles
+  modalBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    justifyContent: 'flex-end',
+  },
+  modalContainer: {
+    backgroundColor: '#fff',
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    overflow: 'hidden',
+  },
+  modalContent: {
+    paddingTop: 40,
+    paddingBottom: 60,
+    paddingHorizontal: 25,
+  },
+  modalTitle: {
+    fontSize: 22,
+    fontFamily: 'Poppins-SemiBold',
+    color: '#000',
+    marginBottom: 40,
+    lineHeight: 30,
+  },
+  documentItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderWidth: 1,
+    borderColor: '#f0f0f0',
+    borderRadius: 2,
+    marginBottom: 15,
+    height: 75,
+    paddingLeft: 20,
+  },
+  documentItemText: {
+    fontSize: 14,
+    fontFamily: 'Poppins-Regular',
+    color: '#999',
+    letterSpacing: 0.2,
+  },
+  documentIconContainer: {
+    width: 50,
+    height: '100%',
+    borderLeftWidth: 1,
+    borderLeftColor: '#f0f0f0',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#fafafa',
   },
 });
