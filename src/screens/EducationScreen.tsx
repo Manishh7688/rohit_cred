@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, TextInput, Image, ScrollView, StatusBar } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, TextInput, Image, ScrollView, StatusBar, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { IndianRupee, ArrowLeft, Search, UserSquare, Landmark, ChevronsRight, ArrowRight, MessageSquare, FileClock, GraduationCap, ChevronRight, Book } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
@@ -10,6 +10,7 @@ const { width } = Dimensions.get('window');
 
 const EducationScreen: React.FC = () => {
   const navigation = useNavigation();
+  const [showWarning, setShowWarning] = React.useState(false);
   const TUTORS = [
     { id: '1', name: 'Harnoor Kaur Gulati', sub: 'French CBSE', img: 'https://picsum.photos/seed/harnoor/200' },
     { id: '2', name: 'S Anup Kumar', sub: 'Pain Management', img: 'https://picsum.photos/seed/anup/200' },
@@ -58,7 +59,7 @@ const EducationScreen: React.FC = () => {
         {/* Actions Grid */}
         <View style={styles.actionsGrid}>
           {/* Pay Contacts */}
-          <TouchableOpacity style={styles.actionItem} onPress={() => navigation.navigate('Contact')}>
+          <TouchableOpacity style={styles.actionItem} onPress={() => setShowWarning(true)}>
             <View style={styles.iconCircle}>
               <UserSquare color="#000" size={26} strokeWidth={1.5} />
             </View>
@@ -66,7 +67,7 @@ const EducationScreen: React.FC = () => {
           </TouchableOpacity>
 
           {/* Bank Account */}
-          <TouchableOpacity style={styles.actionItem}>
+          <TouchableOpacity style={styles.actionItem} onPress={() => setShowWarning(true)}>
             <View style={styles.iconCircle}>
               <Landmark color="#000" size={26} strokeWidth={1.5} />
             </View>
@@ -74,7 +75,7 @@ const EducationScreen: React.FC = () => {
           </TouchableOpacity>
 
           {/* Pay to UPI ID */}
-          <TouchableOpacity style={styles.actionItem}>
+          <TouchableOpacity style={styles.actionItem} onPress={() => setShowWarning(true)}>
             <View style={styles.iconCircle}>
               {/* Approximating the double arrow box icon from the specific custom asset */}
               <View style={styles.squareIconOutline}>
@@ -97,10 +98,10 @@ const EducationScreen: React.FC = () => {
               <Text style={styles.avatarInitials}>ah</Text>
             </View>
             <View style={styles.listTextWrap}>
-              <Text style={styles.listName}>Alok Maheshwari Huf</Text>
+              <Text style={styles.listName}>Tanaji Sonaji Nagre</Text>
               <View style={styles.subTextRow}>
                 <Text style={styles.listSub}>tuition fees • </Text>
-                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <IndianRupee size={10} color="#888" strokeWidth={3} style={{ marginBottom: 2 }} />
                 <Text style={styles.listSub}>8,400</Text>
               </View>
             </View>
@@ -115,10 +116,10 @@ const EducationScreen: React.FC = () => {
               <Text style={styles.avatarInitials}>kc</Text>
             </View>
             <View style={styles.listTextWrap}>
-              <Text style={styles.listName}>Kaushalya Wo Tarsee...</Text>
+              <Text style={styles.listName}>24 VISION HOSPITALITY PRIVATE LIMITED</Text>
               <View style={styles.subTextRow}>
                 <Text style={styles.listSub}>tuition fees • </Text>
-                <IndianRupee size={10} color="#888" strokeWidth={3} />
+                <IndianRupee size={10} color="#888" strokeWidth={3} style={{ marginBottom: 2 }} />
                 <Text style={styles.listSub}>25,200</Text>
               </View>
             </View>
@@ -128,38 +129,9 @@ const EducationScreen: React.FC = () => {
           </View>
           <View style={styles.divider} />
 
-          <View style={styles.listItem}>
-            <View style={[styles.avatarCircle, { backgroundColor: '#f9cca9' }]}>
-              <Text style={styles.avatarInitials}>sc</Text>
-            </View>
-            <View style={styles.listTextWrap}>
-              <Text style={styles.listName}>Suyash Chourasia</Text>
-              <Text style={styles.listSub}>tuition fees</Text>
-            </View>
-            <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
-              <Text style={styles.blackBtnText}>Pay now</Text>
-            </TouchableOpacity>
-          </View>
+
         </View>
 
-        {/* UNVERIFIED TUTORS */}
-        <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>UNVERIFIED TUTORS</Text>
-        </View>
-        <View style={styles.listCard}>
-          <View style={styles.listItem}>
-            <View style={[styles.avatarCircle, { backgroundColor: '#f9cca9' }]}>
-              <Text style={styles.avatarInitials}>sg</Text>
-            </View>
-            <View style={styles.listTextWrap}>
-              <Text style={styles.listName}>Suraj Goyal</Text>
-              <Text style={styles.listSubOrange}>onboarding pending</Text>
-            </View>
-            <TouchableOpacity style={styles.blackBtn} activeOpacity={0.8}>
-              <Text style={styles.blackBtnText}>Request</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
 
         {/* TOP TUTORS ON CRED */}
         <View style={styles.sectionHeader}>
@@ -278,6 +250,46 @@ const EducationScreen: React.FC = () => {
         </View>
 
       </ScrollView>
+      {/* Warning Modal */}
+      <Modal
+        visible={showWarning}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowWarning(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowWarning(false)}
+        >
+          <View style={styles.modalContent}>
+            <Image
+              source={require('../assets/images/warning.jpeg')}
+              style={styles.warningImage}
+              resizeMode="contain"
+            />
+
+            <Text style={styles.modalTitle}>
+              this service is temporarily not available
+            </Text>
+
+            <Text style={styles.modalSubtitle}>
+              please try again after some time.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              activeOpacity={0.9}
+              onPress={() => setShowWarning(false)}
+            >
+              <Text style={styles.modalButtonText}>Understood </Text>
+              <View style={{ transform: [{ rotate: '180deg' }] }}>
+                <ArrowIcon color="#fff" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -504,4 +516,51 @@ const styles = StyleSheet.create({
   footerCircles: { flexDirection: 'row', alignItems: 'center' },
   footerCircle: { width: 14, height: 14, borderRadius: 7 },
   footerBrandTxt: { fontFamily: 'Poppins-Bold', fontSize: 10, color: '#114499', fontStyle: 'italic' },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 30,
+    paddingTop: 50,
+    paddingBottom: 60,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  warningImage: {
+    width: 150,
+    height: 100,
+    marginBottom: 35,
+  },
+  modalTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 22,
+    color: '#1a1a1a',
+    marginBottom: 12,
+    lineHeight: 30,
+  },
+  modalSubtitle: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 40,
+  },
+  modalButton: {
+    backgroundColor: '#0f0f12',
+    height: 60,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10
+  },
+  modalButtonText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
 });

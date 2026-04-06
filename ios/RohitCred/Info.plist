@@ -58,7 +58,12 @@
 	<array>
 		<string>CirkaBold700.otf</string>
 		<string>CirkaLight300.otf</string>
+		<string>Gilroy-ExtraBold.otf</string>
+		<string>Gilroy-Light.otf</string>
 		<string>CirkaRegular400.ttf</string>
+		<string>Gilroy-font.ttf</string>
+		<string>Gilroy-Medium.ttf</string>
+		<string>Gilroy-SemiBold.ttf</string>
 		<string>Poppins-Black.ttf</string>
 		<string>Poppins-BlackItalic.ttf</string>
 		<string>Poppins-Bold.ttf</string>

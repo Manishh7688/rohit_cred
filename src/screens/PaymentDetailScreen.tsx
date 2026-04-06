@@ -13,6 +13,7 @@ import {
   Platform,
   PermissionsAndroid,
   Alert,
+  ToastAndroid,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
@@ -35,10 +36,11 @@ type RootStackParamList = {
       [key: string]: any;
     };
   };
+  CredSupport: { Item: any };
 };
 
 const PaymentDetailScreen = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<any>();
   const route = useRoute<RouteProp<RootStackParamList, 'PaymentDetail'>>();
   const { transaction } = route.params || {};
   const [showDownloadModal, setShowDownloadModal] = useState(false);
@@ -56,68 +58,104 @@ const PaymentDetailScreen = () => {
     </View>
   );
 
-  const downloadPDF = async (pdfUri: any) => {
-    console.log("Original pdfUri (Resource ID):", pdfUri);
+  const showToast = (msg: any) => {
+    if (Platform.OS === 'android') {
+      ToastAndroid.showWithGravity(msg, ToastAndroid.LONG, ToastAndroid.BOTTOM);
+    }
+  };
 
-    if (!pdfUri) {
-      Alert.alert('Error', 'No document found for this transaction');
+  const downloadPDF = async (pdfUri: any) => {
+    console.log('Original pdfUri (Resource ID):', pdfUri);
+
+    if (!pdfUri && !transaction?.pdf) {
+      showToast('No document found for this transaction');
       return;
     }
 
     try {
-      // Resolve the require(path) into a valid source/URI
-      const asset = Image.resolveAssetSource(pdfUri);
+      const targetUri = pdfUri || transaction?.pdf;
+      const asset = Image.resolveAssetSource(targetUri);
       let url = asset?.uri;
 
+      const fallbackUrl =
+        'https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf';
+
       if (!url) {
-        Alert.alert('Error', 'Unable to resolve document path');
-        return;
+        console.log('Unable to resolve local asset, using fallback document.');
+        url = fallbackUrl;
       }
 
-      // Fix for Android Emulators: redirect localhost to 10.0.2.2
+      // Fix for Android emulator localhost
       if (Platform.OS === 'android' && url.includes('localhost')) {
         url = url.replace('localhost', '10.0.2.2');
       }
 
-      console.log("Resolved Download URL:", url);
+      console.log('Downloading from:', url);
 
-      // Dynamic naming based on transaction vendor or ID
-      const cleanedVendor = transaction?.vendor?.replace(/[^a-zA-Z0-9]/g, '_');
-      const fileName = `${cleanedVendor || 'receipt'}_${transaction?.id || 'doc'}.pdf`;
+      const cleanedVendor =
+        transaction?.vendor?.replace(/[^a-zA-Z0-9]/g, '_') || 'receipt';
 
-      // Android path
-      const downloadPath =
+      const fileName = `${cleanedVendor}_${transaction?.id || Date.now()
+        }.pdf`;
+
+      const tempPath = `${RNFS.CachesDirectoryPath}/${fileName}`;
+      const finalPath =
         Platform.OS === 'android'
           ? `${RNFS.DownloadDirectoryPath}/${fileName}`
           : `${RNFS.DocumentDirectoryPath}/${fileName}`;
 
-      // Ask permission (Android only)
+      // Android permission (only for < Android 13)
       if (Platform.OS === 'android' && Platform.Version < 33) {
         const granted = await PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'Storage Permission',
+            message: 'App needs storage access to download the receipt.',
+            buttonNeutral: 'Ask Me Later',
+            buttonNegative: 'Cancel',
+            buttonPositive: 'OK',
+          }
         );
 
         if (granted !== PermissionsAndroid.RESULTS.GRANTED) {
-          Alert.alert('Permission Denied!', 'Storage access is required to save the document.');
+          showToast('Permission denied. Cannot save file.');
           return;
         }
       }
 
-      const result = await RNFS.downloadFile({
+      // Show downloading toast
+      showToast('Downloading PDF...');
+
+      const downloadResult = await RNFS.downloadFile({
         fromUrl: url,
-        toFile: downloadPath,
+        toFile: tempPath,
         connectionTimeout: 15000,
         readTimeout: 15000,
       }).promise;
 
-      if (result.statusCode === 200) {
-        Alert.alert('Download Complete', `Saved to: Downloads/${fileName}`);
+      if (downloadResult.statusCode === 200) {
+        try {
+          const exists = await RNFS.exists(finalPath);
+          if (exists) {
+            await RNFS.unlink(finalPath);
+          }
+
+          await RNFS.copyFile(tempPath, finalPath);
+
+          showToast(
+            `Saved to ${Platform.OS === 'android' ? 'Downloads' : 'Documents'
+            }\n${fileName}`
+          );
+        } catch (copyError) {
+          console.log('Copy Error:', copyError);
+          showToast('Downloaded to cache. Check file manager.');
+        }
       } else {
-        Alert.alert('Download Failed', `Status Code: ${result.statusCode}\n\nHint: Check if your Metro bundler is running.`);
+        showToast(`Download failed: ${downloadResult.statusCode}`);
       }
     } catch (error) {
-      console.log('PDF Download Error Detail:', error);
-      Alert.alert('Error', 'An error occurred while saving the file. Check the console for logs.');
+      console.log('PDF Download Error:', error);
+      showToast('Unexpected error during download');
     }
   };
 
@@ -144,7 +182,7 @@ const PaymentDetailScreen = () => {
           </View>
 
           <View style={styles.amountContainer}>
-            <IndianRupee size={28} color="#1a1a1a" strokeWidth={3} style={{ marginTop: -2 }} />
+            <IndianRupee size={26} color="#1a1a1a" strokeWidth={3} style={{}} />
             <Text style={styles.amountValue}>{transaction?.amount?.toLocaleString('en-IN') || '8,400'}</Text>
           </View>
 
@@ -179,7 +217,7 @@ const PaymentDetailScreen = () => {
                   {`amount deposited to ${transaction?.AmountDepositedToUpiId}`}
                 </Text>
               </View>
-              <Text style={styles.timelineTime}>{transaction?.BankConfirmationDate}{transaction?.BankConfirmationTime}</Text>
+              <Text style={styles.timelineTime}>{transaction?.BankConfirmationDate} {transaction?.BankConfirmationTime}</Text>
             </View>
           </View>
         </View>
@@ -203,28 +241,42 @@ const PaymentDetailScreen = () => {
             <Text style={styles.fieldLabel}>paid through credit card</Text>
             <View style={styles.bankRow}>
               <View style={styles.bankLogoWrap}>
-                <Image
-                  source={require('../assets/images/sbilogo.png')}
-                  style={styles.bankLogo}
-                  resizeMode="contain"
-                />
+                {transaction.id == '39' ?
+                  (<Image
+                    source={require('../assets/images/icici.jpg')}
+                    style={styles.bankLogo}
+                    resizeMode="contain"
+                  />) : (
+                    <Image
+                      source={require('../assets/images/sbilogo.png')}
+                      style={styles.bankLogo}
+                      resizeMode="contain"
+                    />
+                  )}
               </View>
-              <View>
-                <Text style={styles.bankName}>SBI</Text>
-                <Text style={styles.cardNumber}>XXXX-XXXX-XXXX-2030</Text>
-              </View>
+
+              {transaction.id == '39' ?
+                (<View>
+                  <Text style={styles.bankName}>ICICI</Text>
+                  <Text style={styles.cardNumber}>XXXX-XXXX-XXXX-4404</Text>
+                </View>) : (
+                  <View>
+                    <Text style={styles.bankName}>SBI</Text>
+                    <Text style={styles.cardNumber}>XXXX-XXXX-XXXX-2030</Text>
+                  </View>
+                )}
             </View>
           </View>
 
           <LabelValue
             label="order id"
-            value="01KCTWFPY4A31ZKFMAHEHZ3JR3-4480672"
+            value={transaction.OrderId || 'N/A'}
             isBold
           />
 
           <LabelValue
             label="utr"
-            value={transaction.Utr}
+            value={transaction.Utr || 'N/A'}
             isBold
           />
 
@@ -234,7 +286,7 @@ const PaymentDetailScreen = () => {
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <IndianRupee size={14} color="#fff" strokeWidth={3} />
                 <Text style={[styles.fieldValue, styles.fieldValueBold]}>
-                  {(transaction?.TransactionAmount || 8631).toLocaleString('en-IN')}
+                  {(transaction?.TotalAmount || 8631).toLocaleString('en-IN')}
                 </Text>
               </View>
             }
@@ -246,7 +298,7 @@ const PaymentDetailScreen = () => {
           {/* Support Section */}
           <View style={styles.supportSection}>
             <Text style={styles.supportTitle}>still having trouble?</Text>
-            <Text style={styles.supportSub}>our customer support should be able to help you out with all your queries</Text>
+            <Text style={styles.supportSub}>our customer support should be able to help {'\n'}you out with all your queries</Text>
             <TouchableOpacity style={styles.contactBtn} onPress={() => navigation.navigate('CredSupport', { Item: transaction })}>
               <Text style={styles.contactBtnText}>Contact support</Text>
             </TouchableOpacity>
@@ -273,8 +325,7 @@ const PaymentDetailScreen = () => {
               <TouchableOpacity
                 style={styles.documentItem}
                 onPress={() => {
-                  setShowDownloadModal(false);
-                  downloadPDF(transaction?.pdf);
+                  showToast('something went wrong!');
                 }}
               >
                 <Text style={styles.documentItemText}>education receipt</Text>
@@ -286,8 +337,17 @@ const PaymentDetailScreen = () => {
               <TouchableOpacity
                 style={styles.documentItem}
                 onPress={() => {
-                  setShowDownloadModal(false);
-                  downloadPDF(transaction?.pdf);
+
+                  if (transaction?.pdf) {
+                    setShowDownloadModal(false);
+
+                    navigation.navigate('PdfShow', {
+                      source: transaction?.pdf,
+                      // title: 'education receipt'
+                    });
+                  } else {
+                    showToast('No document found for this transaction');
+                  }
                 }}
               >
                 <Text style={styles.documentItemText}>tax invoice</Text>
@@ -323,7 +383,7 @@ const styles = StyleSheet.create({
   },
   headerTitle: {
     color: '#fff',
-    fontFamily: 'CirkaBold700',
+    fontFamily: 'Poppins-Medium',
     fontSize: 16,
     // letterSpacing: 0.5,
   },
@@ -370,8 +430,8 @@ const styles = StyleSheet.create({
   amountValue: {
     fontSize: 32,
     color: '#1a1a1a',
-    fontFamily: 'Poppins-SemiBold',
-    marginLeft: 4,
+    fontFamily: 'Gilroy-ExtraBold',
+    marginLeft: 2,
   },
   cardDivider: {
     height: 1,
@@ -445,8 +505,9 @@ const styles = StyleSheet.create({
   timelineTime: {
     fontSize: 10,
     color: '#333',
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Gilroy-Medium',
     marginTop: 6,
+    fontWeight: '600'
   },
   tutorSection: {
     paddingHorizontal: 25,
@@ -470,7 +531,7 @@ const styles = StyleSheet.create({
   },
   downloadBtn: {
     borderWidth: 1,
-    borderColor: '#555',
+    borderColor: '#fff',
     alignSelf: 'flex-start',
     paddingHorizontal: 18,
     paddingVertical: 10,
@@ -509,26 +570,30 @@ const styles = StyleSheet.create({
   },
   cardNumber: {
     color: '#fff',
-    fontSize: 15,
-    fontFamily: 'Poppins-Bold',
+    fontSize: 13,
+    fontFamily: 'Gilroy-ExtraBold',
     marginTop: 2,
+    letterSpacing: 1.2,
   },
   labelValueContainer: {
     marginBottom: 30,
   },
   fieldLabel: {
     fontSize: 12,
-    color: '#666',
+    color: '#999',
     fontFamily: 'Poppins-Medium',
     marginBottom: 6,
   },
   fieldValue: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'Poppins-Regular',
+    letterSpacing: 1.2,
   },
   fieldValueBold: {
-    fontFamily: 'Poppins-Bold',
+    fontFamily: 'Gilroy-font',
+    fontSize: 13,
+    letterSpacing: 1.2,
   },
   fieldValueGray: {
     color: '#888',
@@ -543,7 +608,7 @@ const styles = StyleSheet.create({
   },
   supportTitle: {
     color: '#fff',
-    fontSize: 15,
+    fontSize: 13,
     fontFamily: 'Poppins-Bold',
     marginBottom: 6,
   },
@@ -556,7 +621,7 @@ const styles = StyleSheet.create({
   },
   contactBtn: {
     borderWidth: 1,
-    borderColor: '#555',
+    borderColor: '#fff',
     alignSelf: 'flex-start',
     paddingHorizontal: 18,
     paddingVertical: 10,

@@ -73,17 +73,30 @@ const PaymentHistoryScreen = () => {
 
   // Screen States
   const [loading, setLoading] = useState(true);
-  const [transactions, setTransactions] = useState<Transaction[]>([]);
 
   // Filter States
   const [modalVisible, setModalVisible] = useState(false);
   const [activeFilterTab, setActiveFilterTab] = useState('category');
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
 
+  // Filtered transactions computed from raw data and selected filters
+  const transactions = React.useMemo(() => {
+    if (selectedCategories.length === 0) return MOCK_DATA;
+
+    return MOCK_DATA.filter((item: any) => {
+      // Map category options to vendor patterns
+      return selectedCategories.some(cat => {
+        if (cat === 'education payments') return item.vendor === 'Education Fees Payment';
+        if (cat === 'rent payments') return item.vendor === 'Rent Payment';
+        // Add more category-to-vendor mappings as needed
+        return false;
+      });
+    });
+  }, [selectedCategories]);
+
   // Simulation of API load
   useEffect(() => {
     const loadInitial = setTimeout(() => {
-      setTransactions(MOCK_DATA);
       setLoading(false);
     }, 1000);
     return () => clearTimeout(loadInitial);
@@ -98,7 +111,6 @@ const PaymentHistoryScreen = () => {
   };
 
   const applyFilters = () => {
-    // Dummy apply logic: just close modal for UI demo
     setModalVisible(false);
   };
 
@@ -188,7 +200,7 @@ const PaymentHistoryScreen = () => {
             </View>
             <View style={styles.cardRight}>
               <View style={styles.amountContainer}>
-                <IndianRupee size={12} color="#000" strokeWidth={3} style={{ marginBottom: 2 }} />
+                <IndianRupee size={10} color="#000" strokeWidth={3} style={{}} />
                 <Text style={styles.amountText}>
                   {(() => {
                     const parts = item.amount.toLocaleString('en-IN', {
@@ -262,10 +274,17 @@ const PaymentHistoryScreen = () => {
         style={styles.filterStrip}
         contentContainerStyle={{ paddingHorizontal: 20, alignItems: 'center' }}
       >
-        <TouchableOpacity style={styles.filterPillActive} onPress={() => setModalVisible(true)}>
-          <Filter size={12} color="#000" style={{ marginRight: 6 }} />
-          <Text style={styles.filterPillTextActive}>FILTER</Text>
-          <ChevronDown size={14} color="#000" style={{ marginLeft: 4 }} />
+        <TouchableOpacity
+          style={selectedCategories.length > 0 ? styles.filterPillActive : styles.filterPill}
+          onPress={() => setModalVisible(true)}
+        >
+          {selectedCategories.length > 0 && (
+            <View style={styles.filterCountBadge}>
+              <Text style={styles.filterCountText}>{selectedCategories.length}</Text>
+            </View>
+          )}
+          <Text style={selectedCategories.length > 0 ? styles.filterPillTextActive : styles.filterPillText}>FILTER</Text>
+          <ChevronDown size={14} color={selectedCategories.length > 0 ? "#000" : "#999"} style={{ marginLeft: 4 }} />
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.filterPill} onPress={() => setModalVisible(true)}>
@@ -466,6 +485,21 @@ const styles = StyleSheet.create({
     color: '#222',
     letterSpacing: 1.2,
   },
+  filterCountBadge: {
+    width: 18,
+    height: 18,
+    borderRadius: 9,
+    backgroundColor: '#000',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 8,
+  },
+  filterCountText: {
+    color: '#fff',
+    fontSize: 10,
+    fontFamily: 'Poppins-Bold',
+    lineHeight: 14,
+  },
   monthHeader: {
     marginTop: 40,
     marginBottom: 15,
@@ -487,9 +521,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   vendorIcon: {
-    width: 60,
-    height: 60,
-    borderRadius: 30,
+    width: 50,
+    height: 50,
+    borderRadius: 25,
     backgroundColor: '#fff',
     borderWidth: 1,
     borderColor: '#f5f5f5',
@@ -554,13 +588,14 @@ const styles = StyleSheet.create({
   },
   amountText: {
     fontSize: 13,
-    fontFamily: 'Poppins-SemiBold',
+    fontFamily: 'Gilroy-font',
     color: '#000',
+    // fontWeight: '600',
     // marginLeft: 2,
   },
   decimalText: {
     color: '#000',
-    fontFamily: 'Poppins-Regular',
+    fontFamily: 'Gilroy-Light',
   },
   failedBadge: {
     backgroundColor: '#fff5f5',
@@ -655,7 +690,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   modalTabText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Poppins-Medium',
     color: '#888',
   },
@@ -677,7 +712,7 @@ const styles = StyleSheet.create({
     paddingVertical: 18,
   },
   checkboxLabel: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Poppins-Medium',
     color: '#222',
   },
@@ -729,7 +764,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   applyBtnText: {
-    fontSize: 14,
+    fontSize: 13,
     fontFamily: 'Poppins-Bold',
     color: '#fff',
   },

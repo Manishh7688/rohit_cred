@@ -33,6 +33,8 @@ import {
   Book,
   Trophy,
   Copy,
+  MessageSquareMore,
+  GiftIcon,
 } from 'lucide-react-native';
 import { useNavigation } from '@react-navigation/native';
 
@@ -167,7 +169,7 @@ const HomeScreen: React.FC = () => {
   };
 
 
-  const onMomentumScrollEnd = (event) => {
+  const onMomentumScrollEnd = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / BANNER_WIDTH);
 
@@ -198,7 +200,7 @@ const HomeScreen: React.FC = () => {
         {/* Header Section */}
         <View style={styles.header}>
           <View style={styles.headerLeft}>
-            <TouchableOpacity activeOpacity={1} onPress={() => navigation.navigate('Profile')} style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 3, borderColor: '#999' }}>
+            <TouchableOpacity activeOpacity={1} onPress={() => (navigation as any).navigate('Profile')} style={{ width: 50, height: 50, borderRadius: 25, borderWidth: 3, borderColor: '#999' }}>
               <Image source={require('../assets/images/user.jpeg')} style={styles.avatar} />
             </TouchableOpacity>
             <View>
@@ -222,7 +224,7 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>MONEY MATTERS</Text>
         </View>
         <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.horizontalScroll}>
-          <TouchableOpacity style={styles.pillCard} onPress={() => navigation.navigate('Pan')}>
+          <TouchableOpacity style={styles.pillCard} onPress={() => (navigation as any).navigate('Pan')}>
             <WalletCards color="#000" size={18} />
             <Text style={styles.pillCardText}>wallet</Text>
             <Text style={styles.setupNowText}>setup now</Text>
@@ -254,12 +256,12 @@ const HomeScreen: React.FC = () => {
             <Text style={styles.forYouLabel}>bills &{'\n'}recharges</Text>
           </View>
 
-          <View style={styles.forYouItem}>
+          <TouchableOpacity style={styles.forYouItem} activeOpacity={1} onPress={() => (navigation as any).navigate('Education')}>
             <View style={styles.forYouCircle}>
               <Book color="#000" size={32} strokeWidth={1} />
             </View>
             <Text style={styles.forYouLabel}>education{'\n'}fees</Text>
-          </View>
+          </TouchableOpacity>
 
           <View style={styles.forYouItem}>
             <View style={styles.forYouCircle}>
@@ -353,21 +355,21 @@ const HomeScreen: React.FC = () => {
           <Text style={styles.sectionTitle}>QUICK ACCESS</Text>
         </View>
         <View style={styles.quickAccessList}>
-          <TouchableOpacity style={styles.quickAccessItem} onPress={() => navigation.navigate('PaymentHistory')}>
+          <TouchableOpacity style={styles.quickAccessItem} onPress={() => (navigation as any).navigate('PaymentHistory')}>
             <FileText color="#333" size={20} />
             <Text style={styles.quickAccessText}>payment history</Text>
             <ChevronRight color="#666" size={20} />
           </TouchableOpacity>
           <View style={styles.dashedDivider} />
-          <TouchableOpacity style={styles.quickAccessItem}>
-            <Building color="#333" size={20} />
-            <Text style={styles.quickAccessText}>bank balance</Text>
+          <TouchableOpacity style={styles.quickAccessItem} onPress={() => (navigation as any).navigate('SupportMain')}>
+            <MessageSquareMore color="#333" size={20} />
+            <Text style={styles.quickAccessText}>contact support</Text>
             <ChevronRight color="#666" size={20} />
           </TouchableOpacity>
           <View style={styles.dashedDivider} />
           <TouchableOpacity style={styles.quickAccessItem}>
-            <BadgeCheck color="#333" size={20} />
-            <Text style={styles.quickAccessText}>CIBIL score</Text>
+            <GiftIcon color="#333" size={20} />
+            <Text style={styles.quickAccessText}>refer and earn</Text>
             <ChevronRight color="#666" size={20} />
           </TouchableOpacity>
         </View>
@@ -452,7 +454,7 @@ const styles = StyleSheet.create({
   upiIdRight: { flexDirection: 'row', alignItems: 'center' },
   verticalPipe: { width: 1, height: 14, backgroundColor: '#eee', marginRight: 12 },
   upiSafetyTxt: { fontSize: 11, fontFamily: 'Poppins-Medium', color: '#888' },
-
+  upiBanner: { flex: 1, borderRadius: 16, padding: 20, justifyContent: 'center' },
   upiRewardBanner: { flex: 1, borderRadius: 16, padding: 20, justifyContent: 'center' },
   upiContent: { flexDirection: 'row', alignItems: 'center' },
   upiImage: { width: 70, height: 75, marginRight: 20 },

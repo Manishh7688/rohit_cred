@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Image } from 'react-native';
+import * as React from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, StatusBar, Image, Modal } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { ArrowRight, FileBadge } from 'lucide-react-native';
 import LinearGradient from 'react-native-linear-gradient';
@@ -8,6 +8,8 @@ import ArrowIcon from '../components/ArrowIcon';
 const { width } = Dimensions.get('window');
 
 const PanScreen: React.FC = ({ navigation }: any) => {
+  const [showWarning, setShowWarning] = React.useState(false);
+
   return (
     <SafeAreaView style={styles.safeArea} edges={['top', 'bottom']}>
       <StatusBar backgroundColor="#111" barStyle={'light-content'} />
@@ -62,7 +64,11 @@ const PanScreen: React.FC = ({ navigation }: any) => {
         </LinearGradient>
 
         {/* Action Button */}
-        <TouchableOpacity style={styles.button} activeOpacity={0.8} >
+        <TouchableOpacity
+          style={styles.button}
+          activeOpacity={0.8}
+          onPress={() => setShowWarning(!showWarning)}
+        >
           <Text style={styles.buttonText}>Confirm and proceed</Text>
           <View style={{ transform: [{ rotate: '180deg' }] }}>
             <ArrowIcon color="#fff" />
@@ -74,6 +80,47 @@ const PanScreen: React.FC = ({ navigation }: any) => {
           <Text style={styles.linkText}>Some details are incorrect</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Warning Modal */}
+      <Modal
+        visible={showWarning}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowWarning(false)}
+      >
+        <TouchableOpacity
+          style={styles.modalOverlay}
+          activeOpacity={1}
+          onPress={() => setShowWarning(false)}
+        >
+          <View style={styles.modalContent}>
+            <Image
+              source={require('../assets/images/warning.jpeg')}
+              style={styles.warningImage}
+              resizeMode="contain"
+            />
+
+            <Text style={styles.modalTitle}>
+              this service is temporarily not available
+            </Text>
+
+            <Text style={styles.modalSubtitle}>
+              please try again after some time.
+            </Text>
+
+            <TouchableOpacity
+              style={styles.modalButton}
+              activeOpacity={0.9}
+              onPress={() => setShowWarning(false)}
+            >
+              <Text style={styles.modalButtonText}>Understood </Text>
+              <View style={{ transform: [{ rotate: '180deg' }] }}>
+                <ArrowIcon color="#fff" />
+              </View>
+            </TouchableOpacity>
+          </View>
+        </TouchableOpacity>
+      </Modal>
     </SafeAreaView>
   );
 };
@@ -209,4 +256,52 @@ const styles = StyleSheet.create({
     color: '#345dc2', // Slightly dark blue
     textDecorationLine: 'underline',
   },
+  // Modal Styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.6)',
+    justifyContent: 'flex-end',
+  },
+  modalContent: {
+    backgroundColor: '#fff',
+    padding: 30,
+    paddingTop: 50,
+    paddingBottom: 60,
+    borderTopLeftRadius: 16,
+    borderTopRightRadius: 16,
+  },
+  warningImage: {
+    width: 150,
+    height: 100,
+    marginBottom: 35,
+  },
+  modalTitle: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 22,
+    color: '#1a1a1a',
+    marginBottom: 12,
+    lineHeight: 30,
+  },
+  modalSubtitle: {
+    fontFamily: 'Poppins-Regular',
+    fontSize: 14,
+    color: '#666',
+    marginBottom: 40,
+  },
+  modalButton: {
+    backgroundColor: '#0f0f12',
+    height: 60,
+    borderRadius: 4,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+    gap: 10
+  },
+  modalButtonText: {
+    fontFamily: 'Poppins-Bold',
+    fontSize: 14,
+    color: '#fff',
+    letterSpacing: 0.5,
+  },
 });
+

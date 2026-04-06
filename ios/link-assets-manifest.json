@@ -14,8 +14,28 @@
       "sha1": "84c46dbb96ba068f03be10dac63cc2d82b856977"
     },
     {
+      "path": "src/assets/fonts/Gilroy-ExtraBold.otf",
+      "sha1": "ebd136c81542a067830d5852b785d069403c4a15"
+    },
+    {
+      "path": "src/assets/fonts/Gilroy-font.ttf",
+      "sha1": "9ee3b9154afcd608ef76c584dd82ac48b0feded5"
+    },
+    {
+      "path": "src/assets/fonts/Gilroy-Light.otf",
+      "sha1": "78410fd9e800f48e3ffa140497ba2d65ac169d22"
+    },
+    {
+      "path": "src/assets/fonts/Gilroy-Medium.ttf",
+      "sha1": "d7f893124bd4fff78805e69df31385ae113368be"
+    },
+    {
+      "path": "src/assets/fonts/Gilroy-SemiBold.ttf",
+      "sha1": "8663a356eb9bc23b77696208f74376daf59687ea"
+    },
+    {
       "path": "src/assets/fonts/index.ts",
-      "sha1": "5b3c505e4895c34a09e45df80d8c834017b406ad"
+      "sha1": "4131f50273a8a2978facafa9bced18a3e9aed3a1"
     },
     {
       "path": "src/assets/fonts/Poppins-Black.ttf",

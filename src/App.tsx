@@ -3,7 +3,7 @@
  * Organized under src/ structure.
  */
 
-import React from 'react';
+import * as React from 'react';
 import { StatusBar, useColorScheme, Platform } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -17,8 +17,28 @@ import EducationScreen from './screens/EducationScreen';
 import ContactScreen from './screens/ContactScreen';
 import PaymentDetailScreen from './screens/PaymentDetailScreen';
 import CredSupportScreen from './screens/CredSupportScreen';
+import SupportMainScreen from './screens/SupportMainScreen';
+import AutomatedChatScreen from './screens/AutomatedChatScreen';
+import PdfScreen from './screens/PdfShowScreen';
+import QRScreen from './screens/QRScreen';
 
-const Stack = createNativeStackNavigator();
+export type RootStackParamList = {
+  Education: undefined;
+  Contact: undefined;
+  Pan: undefined;
+  Splash: undefined;
+  MainTabs: undefined;
+  PaymentHistory: { month?: string };
+  Profile: undefined;
+  PaymentDetail: { transaction: any };
+  CredSupport: { Item: any };
+  SupportMain: undefined;
+  AutomatedChat: undefined;
+  PdfShow: undefined;
+  QRScreen: undefined;
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
 
 function App(): React.JSX.Element {
   const isDarkMode = useColorScheme() === 'dark';
@@ -34,8 +54,8 @@ function App(): React.JSX.Element {
         backgroundColor={'#fff'}
       // translucent={true}
       />
-      <NavigationContainer>
-        <Stack.Navigator initialRouteName="Splash">
+      <NavigationContainer children={
+        <Stack.Navigator initialRouteName="Splash" id="root">
           <Stack.Screen
             name="Education"
             component={EducationScreen}
@@ -103,11 +123,46 @@ function App(): React.JSX.Element {
               animation: 'slide_from_bottom',
             }}
           />
+          <Stack.Screen
+            name="SupportMain"
+            component={SupportMainScreen}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="AutomatedChat"
+            component={AutomatedChatScreen}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="PdfShow"
+            component={PdfScreen}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
+          <Stack.Screen
+            name="QRScreen"
+            component={QRScreen}
+            options={{
+              headerShown: false,
+              presentation: 'modal',
+              animation: 'slide_from_bottom',
+            }}
+          />
         </Stack.Navigator>
-      </NavigationContainer>
+      } />
     </SafeAreaProvider>
   );
 }
 
 export default App;
-

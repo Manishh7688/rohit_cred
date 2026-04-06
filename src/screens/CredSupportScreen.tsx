@@ -18,6 +18,7 @@ const CredSupportScreen = ({ route }: { route: any }) => {
   const navigation = useNavigation();
   const { Item } = route.params;
   const [showHelpModal, setShowHelpModal] = useState(false);
+  const [showPaymentNotReflectingModal, setShowPaymentNotReflectingModal] = useState(false);
 
   const ChatBubble = ({ text, time }: { text: string | React.ReactNode; time: string }) => (
     <View style={styles.messageWrapper}>
@@ -58,9 +59,9 @@ const CredSupportScreen = ({ route }: { route: any }) => {
       >
         <ChatBubble
           text={
-            <Text>
-              Shivam, your payment of <IndianRupee size={12} color="#333" strokeWidth={3} />
-              <Text>{Item?.TransactionAmount}</Text> has been successfully deposited to your recipient's account on {Item?.TransactionDate} with the UTR number as {Item?.UtrNumber}
+            <Text style={{ fontSize: 11, fontFamily: 'Gilroy-Medium' }}>
+              Shivam, your payment of <IndianRupee size={8} color="#999" strokeWidth={3} />
+              <Text>{Item?.TransactionAmount.toLocaleString('en-IN')}</Text> has been successfully deposited to your recipient's account on {Item?.BankConfirmationTime}, {Item?.Both} with the{'\n'}UTR number as {Item?.UtrNumber}
             </Text>
           }
           time={`SUPPORT • ${new Date().toLocaleTimeString([], {
@@ -71,12 +72,12 @@ const CredSupportScreen = ({ route }: { route: any }) => {
 
         <ChatBubble
           text={
-            <Text>
-              we recommend you share the above UTR number with your recipient so that they can find your transaction in their bank statement
+            <Text style={{ fontSize: 11, fontFamily: 'Gilroy-Medium' }}>
+              we recommend you share the above UTR number with your recipient so that they can find your transaction in their bank{'\n'}statement
               {"\n\n"}
-              the payment will reflect by the name of{" "}
+              the payment will reflect by the name of{"\n"}
               <Text style={{ fontFamily: 'Poppins-Bold' }}>"CRED"</Text> or{" "}
-              <Text style={{ fontFamily: 'Poppins-Bold' }}>"DREAMPLUG"</Text> in your recipient's bank account
+              <Text style={{ fontFamily: 'Poppins-Bold' }}>"DREAMPLUG"</Text> in your recipient's{'\n'}bank account
             </Text>
           }
           time={`SUPPORT • ${new Date().toLocaleTimeString([], {
@@ -84,9 +85,10 @@ const CredSupportScreen = ({ route }: { route: any }) => {
             minute: '2-digit',
           })}`}
         />
+
         {/* Quick Actions Footer */}
         <View style={styles.footer}>
-          <TouchableOpacity style={styles.actionButton} activeOpacity={0.8}>
+          <TouchableOpacity style={styles.actionButton} activeOpacity={0.8} onPress={() => setShowPaymentNotReflectingModal(true)} >
             <Text style={styles.actionButtonText}>Payment is not reflecting</Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -97,6 +99,23 @@ const CredSupportScreen = ({ route }: { route: any }) => {
             <Text style={styles.actionButtonText}>Okay</Text>
           </TouchableOpacity>
         </View>
+        {
+          showPaymentNotReflectingModal && (
+            <ChatBubble
+              text={
+                <Text style={{ fontSize: 11 }}>
+                  we are sorry to hear that.
+                  {"\n"}
+                  please try again in sometime {" "}
+                </Text>
+              }
+              time={`SUPPORT • ${new Date().toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit',
+              })}`}
+            />
+          )
+        }
       </ScrollView>
 
       {/* Feedback Modal */}
@@ -220,7 +239,7 @@ const styles = StyleSheet.create({
   },
   supportTimeText: {
     fontSize: 10,
-    fontFamily: 'Poppins-Medium',
+    fontFamily: 'Gilroy-Medium',
     color: '#bbb',
     marginTop: 10,
     marginLeft: 10,
@@ -253,8 +272,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   actionButtonText: {
-    fontSize: 12,
-    fontFamily: 'Poppins-Medium',
+    fontSize: 11,
+    fontFamily: 'Gilroy-Medium',
     color: '#333',
   },
   // Modal Styles
