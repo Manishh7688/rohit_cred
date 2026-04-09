@@ -575,12 +575,12 @@ export const MOCK_DATA: any[] = [
         AmountDepositedToUpiId: "Q032832151@ybl",
         TutorName: "24 VISION HOSPITALITY PRIVATE LIMITED",
         OrderId: '01K4PPK4Y4R73YA7BBJ6QXV8JS-2453260',
-        Utr: '430422052525',
+        Utr: '430423052525',
         TotalAmount: 16830.45,
         Time: "1:11 PM",
         Date: "9th sep",
         Both: '09 Sep 25',
-        UtrNumber: '430422052525',
+        UtrNumber: '430423052525',
         pdf: require('../assets/images/09_Sep_16380.jpg')
     },
     {
